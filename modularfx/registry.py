@@ -39,6 +39,18 @@ def register_many(node, content, group, items):
             pass
 
 
+def register_combined(node, content, group, name, items):
+    try:
+        register_node(type(name, (node,), {
+            'group': group,
+            'clsgrp': items,
+            'sig': inspect.signature(next(iter(items.values()))),
+            'NodeContent_class': content
+        }))
+    except InvalidNodeRegistration:
+        pass
+
+
 def get_node_by_id(id):
     if id not in node_registry: raise OpCodeNotRegistered(f"Node {id} is not registered.")
     return node_registry[id]

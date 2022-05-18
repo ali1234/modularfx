@@ -1,5 +1,5 @@
 from modularfx.basenode import *
-from modularfx.registry import register_node, register_many, introspect
+from modularfx.registry import register_node, register_many, register_combined, introspect
 
 import gensound.curve
 import gensound.signals
@@ -12,13 +12,13 @@ register_many(
     introspect(gensound.curve, gensound.curve.Curve, ['CompoundCurve', 'MultiCurve'])
 )
 
-register_many(
-    SignalNode, PlayableIntrospectedContent, 'Oscillators',
+register_combined(
+    SignalNode, PlayableIntrospectedContent, 'Signals', 'Oscillator',
     introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
 )
 
 register_many(
-    SignalNode, PlayableIntrospectedContent, 'Noise',
+    SignalNode, PlayableIntrospectedContent, 'Signals',
     {
         'Pink Noise': gensound.signals.PinkNoise,
         'White Noise': gensound.signals.WhiteNoise,

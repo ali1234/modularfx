@@ -144,6 +144,8 @@ class IntrospectedContent(BaseContent):
         if isinstance(self.node, SignalNode):
             self.button = QPushButton("Play", self)
             self.layout.addRow(self.button)
+        if hasattr(self.node, 'clsgrp'):
+            self.addSelect('type', self.node.clsgrp)
         for k,v in self.node.sig.parameters.items():
             default = repr(v.default) if v.default != inspect._empty else ""
             self.addField(k, default)
@@ -163,22 +165,24 @@ class PlayableIntrospectedContent(PlayableContent, IntrospectedContent):
     pass
 
 
-class CurveNode(ChainableNode):
+class IntrospectedNode(ChainableNode):
+    def evalImplementation(self, index):
+        if hasattr(self, 'clsgrp'):
+            return self.content.readSelect('type')(**self.content.extract())
+        else:
+            return self.cls(**self.content.extract())
+
+
+class CurveNode(IntrospectedNode):
     chaintype = 1
 
-    def evalImplementation(self, index):
-        return self.cls(**self.content.extract())
 
-
-class SignalNode(ChainableNode):
+class SignalNode(IntrospectedNode):
     chaintype = 0
 
     def __init__(self, scene):
         super().__init__(scene)
         self.content.button.pressed.connect(self.onPlay)
-
-    def evalImplementation(self, index):
-        return self.cls(**self.content.extract())
 
     def onPlay(self):
         try:
@@ -193,4 +197,4 @@ class TransformNode(SignalNode):
     inputtypes = [0]
 
     def evalImplementation(self, index):
-        return self.getInput(0).eval() * self.cls(**self.content.extract())
+        return self.getInput(0).eval() * super().eval()
