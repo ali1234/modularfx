@@ -1,3 +1,6 @@
 Proof of concept code.
 
 Uses gensound and pyqt-node-editor to build modular sounds.
+
+I will probably wipe this repo and start over when I have 
+the basic design working the way I want.
