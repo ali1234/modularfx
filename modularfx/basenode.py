@@ -129,7 +129,7 @@ class ChainableNode(BaseNode):
 
     def eval(self, index=0):
         if self.isDirty():
-            self.value = self.chain(self.evalImplementation(index))
+            self.value = self.chain(self.evalImplementation())
             self.markDirty(False)
         return self.value
 
@@ -166,7 +166,7 @@ class PlayableIntrospectedContent(PlayableContent, IntrospectedContent):
 
 
 class IntrospectedNode(ChainableNode):
-    def evalImplementation(self, index):
+    def evalImplementation(self):
         if hasattr(self, 'clsgrp'):
             return self.content.readSelect('type')(**self.content.extract())
         else:
@@ -196,5 +196,5 @@ class SignalNode(IntrospectedNode):
 class TransformNode(SignalNode):
     inputtypes = [0]
 
-    def evalImplementation(self, index):
-        return self.getInput(0).eval() * super().eval()
+    def evalImplementation(self):
+        return self.getInput(0).eval() * super().evalImplementation()
