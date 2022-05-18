@@ -57,7 +57,8 @@ class BaseContent(QDMNodeContentWidget):
         self.fields = {}
 
     def addField(self, label, val):
-        field = QLineEdit(val, self)
+        field = QLineEdit(self)
+        field.setPlaceholderText(val)
         field.setAlignment(Qt.AlignRight)
         field.textChanged.connect(self.onContentChanged)
         self.layout.addRow(label.title(), field)
@@ -72,7 +73,10 @@ class BaseContent(QDMNodeContentWidget):
         self.fields[label] = select
 
     def readField(self, field):
-        return ast.literal_eval(self.fields[field].text())
+        x = self.fields[field].text()
+        if x == '':
+            x = self.fields[field].placeholderText()
+        return ast.literal_eval(x)
 
     def readSelect(self, select):
         return self.fields[select].currentData()
