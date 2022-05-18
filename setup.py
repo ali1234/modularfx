@@ -1,0 +1,18 @@
+from setuptools import setup
+
+setup(
+    name='modularfx',
+    version='0.1',
+    packages=['modularfx'],
+    entry_points={
+        'console_scripts': [
+            'modularfx=modularfx.main:main',
+        ]
+    },
+    install_requires=['pygame', 'nodeeditor', 'QtPy', 'PyQt5'],
+    url='https://github.com/ali1234/modularfx',
+    license='GPL',
+    author='Alistair Buxton',
+    author_email='a.j.buxton@gmail.com',
+    description='Modular synthesizer.'
+)
