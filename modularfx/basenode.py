@@ -3,7 +3,7 @@ import inspect
 
 from qtpy.QtGui import QImage
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox
+from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel
 
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -153,6 +153,12 @@ class IntrospectedContent(BaseContent):
         for k,v in self.node.sig.parameters.items():
             default = repr(v.default) if v.default != inspect._empty else ""
             self.addField(k, default)
+        if isinstance(self.node, TransformNode):
+            self.layout.addRow('Apply')
+        if isinstance(self.node, ChainableNode):
+            l = QLabel('Output', self)
+            l.setAlignment(Qt.AlignmentFlag.AlignRight)
+            self.layout.addRow('Concat', l)
 
     def extract(self):
         return {k: self.readField(k) for k in self.node.sig.parameters.keys()}
