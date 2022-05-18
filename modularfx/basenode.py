@@ -52,9 +52,28 @@ class BaseGraphicsNode(QDMGraphicsNode):
 
 
 class BaseContent(QDMNodeContentWidget):
+
     def initUI(self):
         self.layout = QFormLayout(self)
         self.fields = {}
+        if isinstance(self.node, SignalNode):
+            self.button = QPushButton("Play", self)
+            self.layout.addRow(self.button)
+        if hasattr(self.node, 'clsgrp'):
+            self.addSelect('type', self.node.clsgrp)
+        if hasattr(self.node, 'sig'):
+            for k,v in self.node.sig.parameters.items():
+                default = repr(v.default) if v.default != inspect._empty else ""
+                self.addField(k, default)
+        if isinstance(self.node, TransformNode):
+            self.layout.addRow('Apply')
+        if isinstance(self.node, ChainableNode):
+            l = QLabel('Output', self)
+            l.setAlignment(Qt.AlignmentFlag.AlignRight)
+            self.layout.addRow('Concat', l)
+
+    def extract(self):
+        return {k: self.readField(k) for k in self.node.sig.parameters.keys()}
 
     def addField(self, label, val):
         field = QLineEdit(self)
@@ -139,40 +158,6 @@ class ChainableNode(BaseNode):
 
     def getInput(self, index=0):
         return super().getInput(index+1)
-
-
-class IntrospectedContent(BaseContent):
-
-    def initUI(self):
-        super().initUI()
-        if isinstance(self.node, SignalNode):
-            self.button = QPushButton("Play", self)
-            self.layout.addRow(self.button)
-        if hasattr(self.node, 'clsgrp'):
-            self.addSelect('type', self.node.clsgrp)
-        for k,v in self.node.sig.parameters.items():
-            default = repr(v.default) if v.default != inspect._empty else ""
-            self.addField(k, default)
-        if isinstance(self.node, TransformNode):
-            self.layout.addRow('Apply')
-        if isinstance(self.node, ChainableNode):
-            l = QLabel('Output', self)
-            l.setAlignment(Qt.AlignmentFlag.AlignRight)
-            self.layout.addRow('Concat', l)
-
-    def extract(self):
-        return {k: self.readField(k) for k in self.node.sig.parameters.keys()}
-
-
-class PlayableContent(BaseContent):
-
-    def initUI(self):
-        super().initUI()
-
-
-
-class PlayableIntrospectedContent(PlayableContent, IntrospectedContent):
-    pass
 
 
 class IntrospectedNode(ChainableNode):

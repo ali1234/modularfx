@@ -8,17 +8,17 @@ import gensound.effects
 
 
 register_many(
-    CurveNode, IntrospectedContent, 'Curves',
+    CurveNode, BaseContent, 'Curves',
     introspect(gensound.curve, gensound.curve.Curve, ['CompoundCurve', 'MultiCurve'])
 )
 
 register_combined(
-    SignalNode, PlayableIntrospectedContent, 'Signals', 'Oscillator',
+    SignalNode, BaseContent, 'Signals', 'Oscillator',
     introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
 )
 
 register_many(
-    SignalNode, PlayableIntrospectedContent, 'Signals',
+    SignalNode, BaseContent, 'Signals',
     {
         'Pink Noise': gensound.signals.PinkNoise,
         'White Noise': gensound.signals.WhiteNoise,
@@ -26,17 +26,17 @@ register_many(
 )
 
 register_many(
-    TransformNode, PlayableIntrospectedContent, 'Effects',
+    TransformNode, BaseContent, 'Effects',
     introspect(gensound.effects, gensound.effects.Transform, ['Transform'])
 )
 
 register_many(
-    TransformNode, PlayableIntrospectedContent, 'Filters',
+    TransformNode, BaseContent, 'Filters',
     introspect(gensound.filters, gensound.filters.Filter, ['Filter'])
 )
 
 register_many(
-    TransformNode, PlayableIntrospectedContent, 'Transforms',
+    TransformNode, BaseContent, 'Transforms',
     introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
 )
 
@@ -44,7 +44,7 @@ register_many(
 @register_node
 class Mix(SignalNode):
     group = 'Utilities'
-    NodeContent_class = PlayableContent
+    NodeContent_class = BaseContent
     inputtypes = [0, 0]
 
     def evalImplementation(self, index):
