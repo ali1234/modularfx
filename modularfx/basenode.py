@@ -66,7 +66,7 @@ class BaseContent(QDMNodeContentWidget):
                 default = repr(v.default) if v.default != inspect._empty else ""
                 self.addField(k, default)
         if isinstance(self.node, TransformNode):
-            self.layout.addRow('Apply')
+            self.layout.addRow('Apply', None)
         if isinstance(self.node, ChainableNode):
             l = QLabel('Output', self)
             l.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -97,6 +97,9 @@ class BaseContent(QDMNodeContentWidget):
             x = self.fields[field].placeholderText()
         return ast.literal_eval(x)
 
+    def hideField(self, field, hide):
+        self.fields[field].setVisible(not hide)
+
     def readSelect(self, select):
         return self.fields[select].currentData()
 
@@ -111,9 +114,15 @@ class BaseNode(Node):
     GraphicsNode_class = BaseGraphicsNode
     NodeContent_class = BaseContent
 
-    def __init__(self, *args, **kwargs):
-        print(args, kwargs)
-        super().__init__(*args, **kwargs)
+    def __init__(self, scene, name, inputs, outputs):
+        self.inputmap = {}
+        if hasattr(self, 'sig'):
+            for n,(k,v) in enumerate(reversed(self.sig.parameters.items()), start=len(inputs)):
+                self.inputmap[n] = k
+                self.inputmap[k] = n
+                inputs.append(2)
+                print(n, k)
+        super().__init__(scene, name, inputs, outputs)
         self.markDirty(True)
 
     def initSettings(self):
@@ -124,10 +133,17 @@ class BaseNode(Node):
     def onInputChanged(self, socket=None):
         self.markDirty()
         self.markDescendantsDirty()
+        self.content.hideField(self.inputmap[socket.index], socket.hasAnyEdge())
 
     def onOutputChanged(self, socket=None):
         self.markDirty()
         self.markDescendantsDirty()
+
+    def evalImplementation(self):
+        if hasattr(self, 'clsgrp'):
+            return self.content.readSelect('type')(**self.content.extract())
+        else:
+            return self.cls(**self.content.extract())
 
     def eval(self, index=0):
         if self.isDirty():
@@ -160,19 +176,11 @@ class ChainableNode(BaseNode):
         return super().getInput(index+1)
 
 
-class IntrospectedNode(ChainableNode):
-    def evalImplementation(self):
-        if hasattr(self, 'clsgrp'):
-            return self.content.readSelect('type')(**self.content.extract())
-        else:
-            return self.cls(**self.content.extract())
-
-
-class CurveNode(IntrospectedNode):
+class CurveNode(ChainableNode):
     chaintype = 1
 
 
-class SignalNode(IntrospectedNode):
+class SignalNode(ChainableNode):
     chaintype = 0
 
     def __init__(self, scene):
