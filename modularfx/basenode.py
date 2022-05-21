@@ -158,7 +158,6 @@ class ChainableNode(BaseNode):
     def chain(self, s):
         chain = super().getInput(0)
         if chain is not None:
-            prior = chain.eval()
             s = chain.eval() | s
         return s
 
