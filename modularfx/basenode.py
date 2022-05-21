@@ -3,7 +3,7 @@ import inspect
 
 from qtpy.QtGui import QImage
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout
+from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
 
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -49,6 +49,8 @@ class BaseContent(QDMNodeContentWidget):
         self.layout = QFormLayout(self)
         self.layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.fields = {}
+        self.inputs = []
+        self.outputs = []
         if isinstance(self.node, SignalNode):
             self.button = QPushButton("Play", self)
             self.layout.addRow(self.button)
@@ -59,11 +61,27 @@ class BaseContent(QDMNodeContentWidget):
                 default = repr(v.default) if v.default != inspect._empty else ""
                 self.addField(k, default)
         if isinstance(self.node, TransformNode):
-            self.layout.addRow('Apply', None)
+            self.addField('apply', None)
+            self.hideField('apply', True)
         if isinstance(self.node, ChainableNode):
-            l = QLabel('Output', self)
-            l.setAlignment(Qt.AlignmentFlag.AlignRight)
+            # add an invisible line edit to make this row the right height
+            spacer = QLineEdit(self)
+            sp = spacer.sizePolicy()
+            sp.setRetainSizeWhenHidden(True)
+            spacer.setSizePolicy(sp)
+            spacer.setVisible(False)
+            spacer.setMinimumWidth(1)
+            spacer.setFixedWidth(1)
+            o = QLabel('Output', self)
+            o.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            #o.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+            l = QHBoxLayout(self)
+            l.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+            l.addWidget(spacer)
+            l.addWidget(o)
             self.layout.addRow('Concat', l)
+            self.inputs.append(l)
+            self.outputs.append(l)
 
     def extract(self):
         return {k: self.readField(k) for k in self.node.sig.parameters.keys()}
@@ -78,6 +96,7 @@ class BaseContent(QDMNodeContentWidget):
         field.textChanged.connect(self.onContentChanged)
         self.layout.addRow(label.title(), field)
         self.fields[label] = field
+        self.inputs.append(field)
 
     def addSelect(self, label, values):
         select = QComboBox(self)
@@ -113,11 +132,13 @@ class BaseNode(Node):
     def __init__(self, scene, name, inputs, outputs):
         self.inputmap = {}
         if hasattr(self, 'sig'):
-            for n,(k,v) in enumerate(reversed(self.sig.parameters.items()), start=len(inputs)):
+            auto_inputs = []
+            for n,(k,v) in enumerate(self.sig.parameters.items()):
                 self.inputmap[n] = k
                 self.inputmap[k] = n
-                inputs.append(2)
+                auto_inputs.append(2)
                 print(n, k)
+            inputs = auto_inputs + inputs
         super().__init__(scene, name, inputs, outputs)
         self.markDirty(True)
 
@@ -125,11 +146,23 @@ class BaseNode(Node):
         super().initSettings()
         self.input_socket_position = LEFT_BOTTOM
         self.output_socket_position = RIGHT_BOTTOM
+        self.socket_spacing = 29
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        x, y = super().getSocketPosition(index, position, num_out_of)
+        if position == LEFT_BOTTOM:
+            field = self.content.inputs[index]
+            y = 0.5 + self.grNode.title_height + (field.geometry().height()/2) + field.geometry().topLeft().y() - self.content.layout.geometry().topLeft().y()
+        elif position == RIGHT_BOTTOM:
+            field = self.content.outputs[index]
+            y = 0.5 + self.grNode.title_height + (field.geometry().height()/2) + field.geometry().topLeft().y() - self.content.layout.geometry().topLeft().y()
+        return [x, y]
 
     def onInputChanged(self, socket=None):
         self.markDirty()
         self.markDescendantsDirty()
-        self.content.hideField(self.inputmap[socket.index], socket.hasAnyEdge())
+        if socket.index in self.inputmap:
+            self.content.hideField(self.inputmap[socket.index], socket.hasAnyEdge())
 
     def onOutputChanged(self, socket=None):
         self.markDirty()
@@ -153,10 +186,10 @@ class ChainableNode(BaseNode):
     chaintype = 0
 
     def __init__(self, scene):
-        super().__init__(scene, self.__class__.__name__, [self.chaintype] + self.inputtypes, [self.chaintype])
+        super().__init__(scene, self.__class__.__name__, self.inputtypes + [self.chaintype], [self.chaintype])
 
     def chain(self, s):
-        chain = super().getInput(0)
+        chain = super().getInput(-1)
         if chain is not None:
             s = chain.eval() | s
         return s
@@ -166,9 +199,6 @@ class ChainableNode(BaseNode):
             self.value = self.chain(self.evalImplementation())
             self.markDirty(False)
         return self.value
-
-    def getInput(self, index=0):
-        return super().getInput(index+1)
 
 
 class CurveNode(ChainableNode):
@@ -195,4 +225,4 @@ class TransformNode(SignalNode):
     inputtypes = [0]
 
     def evalImplementation(self):
-        return self.getInput(0).eval() * super().evalImplementation()
+        return self.getInput(-2).eval() * super().evalImplementation()
