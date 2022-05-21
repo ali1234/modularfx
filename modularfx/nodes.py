@@ -9,7 +9,15 @@ import gensound.effects
 
 register_many(
     CurveNode, BaseContent, 'Curves',
-    introspect(gensound.curve, gensound.curve.Curve, ['CompoundCurve', 'MultiCurve'])
+    introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve'])
+)
+
+register_combined(
+    CurveNode, BaseContent, 'Curves', 'Curve',
+    {
+        'Line': gensound.curve.Line,
+        'Logistic': gensound.curve.Logistic,
+    }
 )
 
 register_combined(
@@ -17,11 +25,11 @@ register_combined(
     introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
 )
 
-register_many(
-    SignalNode, BaseContent, 'Signals',
+register_combined(
+    SignalNode, BaseContent, 'Signals', 'Noise',
     {
-        'Pink Noise': gensound.signals.PinkNoise,
-        'White Noise': gensound.signals.WhiteNoise,
+        'Pink': gensound.signals.PinkNoise,
+        'White': gensound.signals.WhiteNoise,
     }
 )
 
