@@ -3,13 +3,14 @@ import inspect
 from functools import reduce
 import operator
 
-from qtpy.QtGui import QImage
+from qtpy.QtGui import QImage, QBrush, QColor
 from qtpy.QtCore import Qt, QRectF
 from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
 
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
+from nodeeditor.node_graphics_socket import SOCKET_COLORS
 from nodeeditor.node_socket import LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM, RIGHT_BOTTOM
 from nodeeditor.utils import dumpException
 
@@ -30,6 +31,7 @@ class BaseGraphicsNode(QDMGraphicsNode):
     def initAssets(self):
         super().initAssets()
         self.icons = QImage("icons/status_icons.png")
+        self._brush_title = QBrush(self.node.node_colour)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         super().paint(painter, QStyleOptionGraphicsItem, widget)
@@ -124,6 +126,7 @@ class BaseContent(QDMNodeContentWidget):
 
 class BaseNode(Node):
     icon = None
+    node_colour = QColor("#FF313131")
 
     GraphicsNode_class = BaseGraphicsNode
     NodeContent_class = BaseContent
@@ -212,10 +215,11 @@ class ChainableNode(BaseNode):
 
 class CurveNode(ChainableNode):
     chaintype = 1
-
+    node_colour = SOCKET_COLORS[1]
 
 class SignalNode(ChainableNode):
     chaintype = 0
+    node_colour = SOCKET_COLORS[0]
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -233,10 +237,15 @@ class SignalNode(ChainableNode):
 
 class TransformNode(SignalNode):
     inputtypes = [0]
+    node_colour = SOCKET_COLORS[3]
 
     def __init__(self, scene):
         super().__init__(scene)
         self.inputs[-2].is_multi_edges = True
+
+    def initAssets(self):
+        super().initAssets()
+        self._brush_title = QBrush(QColor("#FF713131"))
 
     def evalImplementation(self):
         return reduce(operator.add, (x.eval() for x in self.getInputs(-2))) * super().evalImplementation()
