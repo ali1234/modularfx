@@ -1,5 +1,7 @@
 import ast
 import inspect
+from functools import reduce
+import operator
 
 from qtpy.QtGui import QImage
 from qtpy.QtCore import Qt, QRectF
@@ -198,7 +200,7 @@ class ChainableNode(BaseNode):
     def chain(self, s):
         i = self.getInputs(-1)
         if i:
-            s = sum(x.eval() for x in i) | s
+            s = reduce(operator.add, (x.eval() for x in i)) | s
         return s
 
     def eval(self, index=0):
@@ -237,4 +239,4 @@ class TransformNode(SignalNode):
         self.inputs[-2].is_multi_edges = True
 
     def evalImplementation(self):
-        return sum(x.eval() for x in self.getInputs(-2)) * super().evalImplementation()
+        return reduce(operator.add, (x.eval() for x in self.getInputs(-2))) * super().evalImplementation()
