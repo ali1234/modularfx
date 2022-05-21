@@ -83,9 +83,6 @@ class BaseContent(QDMNodeContentWidget):
             self.inputs.append(l)
             self.outputs.append(l)
 
-    def extract(self):
-        return {k: self.readField(k) for k in self.node.sig.parameters.keys()}
-
     def addField(self, label, val):
         field = QLineEdit(self)
         field.setPlaceholderText(val)
@@ -168,11 +165,21 @@ class BaseNode(Node):
         self.markDirty()
         self.markDescendantsDirty()
 
+    def extract(self):
+        args = {}
+        for n, k in enumerate(self.sig.parameters.keys()):
+            conn = self.getInput(n)
+            if conn is None:
+                args[k] = self.content.readField(k)
+            else:
+                args[k] = conn.eval()
+        return args
+
     def evalImplementation(self):
         if hasattr(self, 'clsgrp'):
-            return self.content.readSelect('type')(**self.content.extract())
+            return self.content.readSelect('type')(**self.extract())
         else:
-            return self.cls(**self.content.extract())
+            return self.cls(**self.extract())
 
     def eval(self, index=0):
         if self.isDirty():
