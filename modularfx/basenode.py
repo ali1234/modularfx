@@ -72,6 +72,9 @@ class BaseContent(QDMNodeContentWidget):
         field = QLineEdit(self)
         field.setPlaceholderText(val)
         field.setAlignment(Qt.AlignRight)
+        sp = field.sizePolicy()
+        sp.setRetainSizeWhenHidden(True)
+        field.setSizePolicy(sp)
         field.textChanged.connect(self.onContentChanged)
         self.layout.addRow(label.title(), field)
         self.fields[label] = field
