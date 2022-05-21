@@ -196,9 +196,9 @@ class ChainableNode(BaseNode):
         super().__init__(scene, self.__class__.__name__, self.inputtypes + [self.chaintype], [self.chaintype])
 
     def chain(self, s):
-        chain = super().getInput(-1)
-        if chain is not None:
-            s = chain.eval() | s
+        i = self.getInputs(-1)
+        if i:
+            s = sum(x.eval() for x in i) | s
         return s
 
     def eval(self, index=0):
@@ -218,6 +218,7 @@ class SignalNode(ChainableNode):
     def __init__(self, scene):
         super().__init__(scene)
         self.content.button.pressed.connect(self.onPlay)
+        self.inputs[-1].is_multi_edges = True
 
     def onPlay(self):
         try:
@@ -231,5 +232,9 @@ class SignalNode(ChainableNode):
 class TransformNode(SignalNode):
     inputtypes = [0]
 
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.inputs[-2].is_multi_edges = True
+
     def evalImplementation(self):
-        return self.getInput(-2).eval() * super().evalImplementation()
+        return sum(x.eval() for x in self.getInputs(-2)) * super().evalImplementation()
