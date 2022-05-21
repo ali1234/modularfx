@@ -47,16 +47,3 @@ register_many(
     TransformNode, BaseContent, 'Transforms',
     introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
 )
-
-
-@register_node
-class Mix(SignalNode):
-    group = 'Utilities'
-    NodeContent_class = BaseContent
-    inputtypes = [0, 0]
-
-    def evalImplementation(self, index):
-        s = self.getInput(0).eval() + self.getInput(1).eval()
-        return self.chain(s)
-
-
