@@ -3,22 +3,18 @@ import inspect
 
 from qtpy.QtGui import QImage
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel
+from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout
 
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
-from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_BOTTOM
+from nodeeditor.node_socket import LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM, RIGHT_BOTTOM
 from nodeeditor.utils import dumpException
-
-from modularfx.registry import register_node, InvalidNodeRegistration
 
 
 class BaseGraphicsNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 240
-        self.height = 240
         self.edge_roundness = 6
         self.edge_padding = 0
         self.title_horizontal_padding = 8
@@ -26,12 +22,8 @@ class BaseGraphicsNode(QDMGraphicsNode):
 
     def initUI(self):
         super().initUI()
-        r = self.content.childrenRect()
-
-        print(r)
-        #self.width = r.width()
-        #self.height = r.height()
-
+        self.width = self.content.width()
+        self.height = self.content.height() + self.title_height
 
     def initAssets(self):
         super().initAssets()
@@ -55,6 +47,7 @@ class BaseContent(QDMNodeContentWidget):
 
     def initUI(self):
         self.layout = QFormLayout(self)
+        self.layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.fields = {}
         if isinstance(self.node, SignalNode):
             self.button = QPushButton("Play", self)
