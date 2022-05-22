@@ -117,7 +117,16 @@ class BaseContent(QDMNodeContentWidget):
         x = self.fields[field].text()
         if x == '':
             x = self.fields[field].placeholderText()
+            if x == '':
+                return None
         return ast.literal_eval(x)
+
+    def serializeField(self, field):
+        return self.fields[field].text()
+
+    def deserializeField(self, field, value):
+        if value != self.fields[field].placeholderText():
+            self.fields[field].setText(value)
 
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
@@ -198,9 +207,20 @@ class BaseNode(Node):
         return self.value
 
     def serialize(self):
-        res = super().serialize()
-        res['type_name'] = self.__class__.__name__
-        return res
+        data = super().serialize()
+        data['type_name'] = self.__class__.__name__
+        data['content_data'] = {
+            field: self.content.serializeField(field) for field in self.sig.parameters.keys()
+        }
+        return data
+
+    def deserialize(self, data, hashmap, restore_id):
+        if super().deserialize(data, hashmap, restore_id):
+            for k, v in data.get('content_data', {}).items():
+                self.content.deserializeField(k, v)
+            return True
+        else:
+            return False
 
 
 class ChainableNode(BaseNode):
