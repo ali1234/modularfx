@@ -4,6 +4,12 @@ setup(
     name='modularfx',
     version='0.1',
     packages=['modularfx'],
+    package_data={
+        'modularfx': [
+            'icons/*',
+            'examples/*',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'modularfx=modularfx.main:main',

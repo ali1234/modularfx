@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, pathlib
 from qtpy.QtWidgets import QApplication
 
 from qtpy.QtGui import QIcon, QKeySequence
@@ -126,6 +126,16 @@ class ModularFXWindow(NodeEditorWindow):
         """Returns ``str`` standard file open/save filter for ``QFileDialog``"""
         return 'ModularFX files (*.mfx);;All files (*)'
 
+    def fileLoad(self, fname):
+        nodeeditor = Editor()
+        if nodeeditor.fileLoad(fname):
+            self.statusBar().showMessage("File %s loaded" % fname, 5000)
+            nodeeditor.setTitle()
+            subwnd = self.createMdiChild(nodeeditor)
+            subwnd.show()
+        else:
+            nodeeditor.close()
+
     def onFileOpen(self):
         fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file',
                                                       self.getFileDialogDirectory(),
@@ -139,14 +149,7 @@ class ModularFXWindow(NodeEditorWindow):
                         self.mdiArea.setActiveSubWindow(existing)
                     else:
                         # we need to create new subWindow and open the file
-                        nodeeditor = Editor()
-                        if nodeeditor.fileLoad(fname):
-                            self.statusBar().showMessage("File %s loaded" % fname, 5000)
-                            nodeeditor.setTitle()
-                            subwnd = self.createMdiChild(nodeeditor)
-                            subwnd.show()
-                        else:
-                            nodeeditor.close()
+                        self.fileLoad(fname)
         except Exception as e:
             dumpException(e)
 
@@ -165,6 +168,12 @@ class ModularFXWindow(NodeEditorWindow):
         self.menuBar().addSeparator()
 
         self.helpMenu = self.menuBar().addMenu("&Help")
+        self.examplesMenu = self.helpMenu.addMenu("&Examples")
+        expath = pathlib.Path(__file__).parent / 'examples'
+        print(expath)
+        for f in expath.glob('*.mfx'):
+            self.examplesMenu.addAction(QAction(f.stem.title(), self, triggered=lambda: self.fileLoad(str(f))))
+        self.helpMenu.addSeparator()
         self.helpMenu.addAction(self.actAbout)
 
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
