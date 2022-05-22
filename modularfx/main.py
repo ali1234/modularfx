@@ -122,6 +122,10 @@ class ModularFXWindow(NodeEditorWindow):
         except Exception as e:
             dumpException(e)
 
+    def getFileDialogFilter(self):
+        """Returns ``str`` standard file open/save filter for ``QFileDialog``"""
+        return 'ModularFX files (*.mfx);;All files (*)'
+
     def onFileOpen(self):
         fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file',
                                                       self.getFileDialogDirectory(),
