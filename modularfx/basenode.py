@@ -3,9 +3,9 @@ import inspect
 from functools import reduce
 import operator
 
-from qtpy.QtGui import QImage, QBrush, QColor
+from qtpy.QtGui import QImage, QBrush, QColor, QPalette, QFont
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
+from qtpy.QtWidgets import QWidget, QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
 
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -32,6 +32,8 @@ class BaseGraphicsNode(QDMGraphicsNode):
         super().initAssets()
         self.icons = QImage("icons/status_icons.png")
         self._brush_title = QBrush(self.node.node_colour)
+        self._brush_background = QBrush(self.node.node_colour.lighter(190))
+        self._title_font.setWeight(QFont.Weight.Black)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         super().paint(painter, QStyleOptionGraphicsItem, widget)
@@ -50,7 +52,11 @@ class BaseGraphicsNode(QDMGraphicsNode):
 class BaseContent(QDMNodeContentWidget):
 
     def initUI(self):
-        self.layout = QFormLayout(self)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        p = self.palette()
+        p.setColor(QPalette.Window, self.node.node_colour)
+        self.layout = QFormLayout()
+        self.setLayout(self.layout)
         self.layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.fields = {}
         self.inputs = []
@@ -148,7 +154,6 @@ class BaseNode(Node):
         super().initSettings()
         self.input_socket_position = LEFT_BOTTOM
         self.output_socket_position = RIGHT_BOTTOM
-        self.socket_spacing = 29
 
     def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
         x, y = super().getSocketPosition(index, position, num_out_of)
