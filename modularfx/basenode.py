@@ -197,6 +197,11 @@ class BaseNode(Node):
             self.markDirty(False)
         return self.value
 
+    def serialize(self):
+        res = super().serialize()
+        res['type_name'] = self.__class__.__name__
+        return res
+
 
 class ChainableNode(BaseNode):
     inputtypes = []

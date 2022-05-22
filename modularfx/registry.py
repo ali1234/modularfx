@@ -51,9 +51,9 @@ def register_combined(node, content, group, name, items):
         pass
 
 
-def get_node_by_id(id):
-    if id not in node_registry: raise OpCodeNotRegistered(f"Node {id} is not registered.")
-    return node_registry[id]
+def get_node_by_id(type_name):
+    if type_name not in node_registry: raise OpCodeNotRegistered(f"Node {type_name} is not registered.")
+    return node_registry[type_name]
 
 
 from modularfx import nodes
