@@ -17,7 +17,6 @@ class BaseNode(Node):
                 self.inputmap[n] = k
                 self.inputmap[k] = n
                 auto_inputs.append(2)
-                print(n, k)
             inputs = auto_inputs + inputs
         super().__init__(scene, name, inputs, outputs)
         self.markDirty(True)
@@ -72,8 +71,6 @@ class BaseNode(Node):
     def serialize(self):
         data = super().serialize()
         data['type_name'] = self.__class__.__name__
-        print(self.content.fields.keys())
-        print(self.sig.parameters.keys())
         data['content_data'] = {
             field: self.content.serializeField(field) for field in self.content.fields.keys()
         }

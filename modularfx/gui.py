@@ -1,13 +1,13 @@
-import os, sys, pathlib
+import sys, pathlib
+from traceback import print_exc
+
 from qtpy.QtWidgets import QApplication
 
 from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
 
-from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
-from nodeeditor.utils import dumpException, pp
 
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
@@ -29,8 +29,6 @@ Edge.registerEdgeValidator(edge_validator_debug)
 Edge.registerEdgeValidator(edge_cannot_connect_two_outputs_or_two_inputs)
 Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
 
-DEBUG = True
-
 
 class ModularFXWindow(NodeEditorWindow):
 
@@ -38,19 +36,9 @@ class ModularFXWindow(NodeEditorWindow):
         self.name_company = 'Ali1234'
         self.name_product = 'ModularFX'
 
-        #self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
-        #loadStylesheets(
-        #    os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),
-        #    self.stylesheet_filename
-        #)
-
         self.empty_icon = QIcon(".")
 
         register_all_nodes(BaseGraphicsNode, BaseContent, Socket)
-
-        if DEBUG:
-            print("Registered nodes:")
-            pp(node_registry)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -125,7 +113,7 @@ class ModularFXWindow(NodeEditorWindow):
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e:
-            dumpException(e)
+            print_exc()
 
     def getFileDialogFilter(self):
         """Returns ``str`` standard file open/save filter for ``QFileDialog``"""
@@ -175,7 +163,6 @@ class ModularFXWindow(NodeEditorWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.examplesMenu = self.helpMenu.addMenu("&Examples")
         expath = pathlib.Path(__file__).parent / 'examples'
-        print(expath)
         for f in expath.glob('*.mfx'):
             self.examplesMenu.addAction(QAction(f.stem.title(), self, triggered=lambda: self.fileLoad(str(f))))
         self.helpMenu.addSeparator()
@@ -214,7 +201,7 @@ class ModularFXWindow(NodeEditorWindow):
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e:
-            dumpException(e)
+            print_exc()
 
     def updateWindowMenu(self):
         self.windowMenu.clear()

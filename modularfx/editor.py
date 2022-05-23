@@ -1,12 +1,12 @@
+from traceback import print_exc
+
 from qtpy.QtGui import QIcon, QPixmap
 from qtpy.QtCore import QDataStream, QIODevice, Qt
 from qtpy.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
 
-from nodeeditor.node_node import Node
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
-from nodeeditor.utils import dumpException
 
 from modularfx.nodelist import NODELIST_MIMETYPE
 from modularfx.registry import node_registry, get_node_by_id
@@ -33,12 +33,8 @@ class Editor(NodeEditorWidget):
         self._close_event_listeners = []
 
     def doEvalOutputs(self):
-        # eval all output nodes
-        print("doEval")
-        for node in self.scene.nodes:
-            if node.id == "OUT":
-                f = node.eval()
-                print(list(f(n/1000) for n in range(1000)))
+        # try to eval the graph here
+        pass
 
     def onHistoryRestored(self):
         self.doEvalOutputs()
@@ -96,7 +92,7 @@ class Editor(NodeEditorWidget):
                 node.setPos(scene_position.x(), scene_position.y())
                 self.scene.history.storeHistory("Created node %s" % node.__class__.__name__)
             except Exception as e:
-                dumpException(e)
+                print_exc()
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
@@ -121,7 +117,7 @@ class Editor(NodeEditorWidget):
 
             return super().contextMenuEvent(event)
         except Exception as e:
-            dumpException(e)
+            print_exc()
 
     def handleNodeContextMenu(self, event):
         if DEBUG_CONTEXT: print("CONTEXT: NODE")

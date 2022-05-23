@@ -48,7 +48,6 @@ def register_combined(node, graphic, content, socket, group, name, items):
 
 
 def get_node_by_id(type_name):
-    print(type_name)
     if type_name not in node_registry:
         raise OpCodeNotRegistered(f"Node {type_name} is not registered.")
     return node_registry[type_name]
