@@ -108,7 +108,7 @@ class BaseContent(QDMNodeContentWidget):
     def addSelect(self, label, values):
         select = QComboBox(self)
         for k, v in values.items():
-            select.addItem(k, v)
+            select.addItem(k, k)
         select.currentIndexChanged.connect(self.onContentChanged)
         self.layout.addRow(label.title(), select)
         self.fields[label] = select
@@ -122,17 +122,23 @@ class BaseContent(QDMNodeContentWidget):
         return ast.literal_eval(x)
 
     def serializeField(self, field):
-        return self.fields[field].text()
+        if isinstance(self.fields[field], QComboBox):
+            return self.fields[field].currentData()
+        else:
+            return self.fields[field].text()
 
     def deserializeField(self, field, value):
-        if value != self.fields[field].placeholderText():
-            self.fields[field].setText(value)
+        if isinstance(self.fields[field], QComboBox):
+            self.fields[field].setCurrentIndex(self.fields[field].findData(value))
+        else:
+            if value != self.fields[field].placeholderText():
+                self.fields[field].setText(value)
 
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
 
     def readSelect(self, select):
-        return self.fields[select].currentData()
+        return self.node.clsgrp[self.fields[select].currentData()]
 
     def onContentChanged(self):
         self.node.markDirty()
@@ -209,8 +215,10 @@ class BaseNode(Node):
     def serialize(self):
         data = super().serialize()
         data['type_name'] = self.__class__.__name__
+        print(self.content.fields.keys())
+        print(self.sig.parameters.keys())
         data['content_data'] = {
-            field: self.content.serializeField(field) for field in self.sig.parameters.keys()
+            field: self.content.serializeField(field) for field in self.content.fields.keys()
         }
         return data
 

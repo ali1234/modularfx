@@ -75,7 +75,8 @@
                 "decay": "2000",
                 "sustain": "0.5",
                 "release": "2000",
-                "hold": ""
+                "hold": "",
+                "apply": ""
             }
         },
         {
@@ -125,6 +126,7 @@
             "content": {},
             "type_name": "Oscillator",
             "content_data": {
+                "type": "Triangle",
                 "frequency": "",
                 "duration": "",
                 "phase": ""
@@ -177,6 +179,7 @@
             "content": {},
             "type_name": "Curve",
             "content_data": {
+                "type": "Line",
                 "begin": "220",
                 "end": "880",
                 "duration": "3e2"
