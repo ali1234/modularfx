@@ -22,7 +22,7 @@ from modularfx.editor import Editor
 from modularfx.nodelist import NodeList
 from modularfx.registry import node_registry, node_groups
 from modularfx.nodes import register_all_nodes
-from modularfx.nodetypes import BaseContent, BaseGraphicsNode
+from modularfx.graphics import BaseContent, BaseGraphicsNode
 
 
 Edge.registerEdgeValidator(edge_validator_debug)
