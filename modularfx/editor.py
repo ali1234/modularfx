@@ -28,14 +28,9 @@ class Editor(NodeEditorWidget):
         self.scene.history.addHistoryRestoredListener(self.onHistoryRestored)
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
-        self.scene.setNodeClassSelector(self.getNodeClassFromData)
+        self.scene.setNodeClassSelector(lambda data: get_node_by_id(data['type_name']))
 
         self._close_event_listeners = []
-
-    def getNodeClassFromData(self, data):
-        if 'type_name' not in data:
-            return Node
-        return get_node_by_id(data['type_name'])
 
     def doEvalOutputs(self):
         # eval all output nodes
