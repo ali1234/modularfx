@@ -12,7 +12,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'modularfx=modularfx.main:main',
+            'modularfx=modularfx.gui:main',
         ]
     },
     install_requires=['gensound', 'pygame', 'nodeeditor', 'QtPy', 'PyQt5'],
