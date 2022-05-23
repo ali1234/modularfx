@@ -7,43 +7,45 @@ import gensound.filters
 import gensound.effects
 
 
-register_many(
-    CurveNode, BaseContent, 'Curves',
-    introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve'])
-)
+def register_all_nodes(graphic, content, socket):
 
-register_combined(
-    CurveNode, BaseContent, 'Curves', 'Curve',
-    {
-        'Line': gensound.curve.Line,
-        'Logistic': gensound.curve.Logistic,
-    }
-)
+    register_many(
+        CurveNode, graphic, content, socket, 'Curves',
+        introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve'])
+    )
 
-register_combined(
-    SignalNode, BaseContent, 'Signals', 'Oscillator',
-    introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
-)
+    register_combined(
+        CurveNode, graphic, content, socket, 'Curves', 'Curve',
+        {
+            'Line': gensound.curve.Line,
+            'Logistic': gensound.curve.Logistic,
+        }
+    )
 
-register_combined(
-    SignalNode, BaseContent, 'Signals', 'Noise',
-    {
-        'Pink': gensound.signals.PinkNoise,
-        'White': gensound.signals.WhiteNoise,
-    }
-)
+    register_combined(
+        SignalNode, graphic, content, socket, 'Signals', 'Oscillator',
+        introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
+    )
 
-register_many(
-    TransformNode, BaseContent, 'Effects',
-    introspect(gensound.effects, gensound.effects.Transform, ['Transform'])
-)
+    register_combined(
+        SignalNode, graphic, content, socket, 'Signals', 'Noise',
+        {
+            'Pink': gensound.signals.PinkNoise,
+            'White': gensound.signals.WhiteNoise,
+        }
+    )
 
-register_many(
-    TransformNode, BaseContent, 'Filters',
-    introspect(gensound.filters, gensound.filters.Filter, ['Filter'])
-)
+    register_many(
+        TransformNode, graphic, content, socket, 'Effects',
+        introspect(gensound.effects, gensound.effects.Transform, ['Transform'])
+    )
 
-register_many(
-    TransformNode, BaseContent, 'Transforms',
-    introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
-)
+    register_many(
+        TransformNode, graphic, content, socket, 'Filters',
+        introspect(gensound.filters, gensound.filters.Filter, ['Filter'])
+    )
+
+    register_many(
+        TransformNode, graphic, content, socket, 'Transforms',
+        introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
+    )

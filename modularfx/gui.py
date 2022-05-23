@@ -11,6 +11,7 @@ from nodeeditor.utils import dumpException, pp
 
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
+from nodeeditor.node_socket import Socket
 from nodeeditor.node_edge_validators import (
     edge_validator_debug,
     edge_cannot_connect_two_outputs_or_two_inputs,
@@ -20,6 +21,8 @@ from nodeeditor.node_edge_validators import (
 from modularfx.editor import Editor
 from modularfx.nodelist import NodeList
 from modularfx.registry import node_registry, node_groups
+from modularfx.nodes import register_all_nodes
+from modularfx.basenode import BaseContent, BaseGraphicsNode
 
 
 Edge.registerEdgeValidator(edge_validator_debug)
@@ -42,6 +45,8 @@ class ModularFXWindow(NodeEditorWindow):
         #)
 
         self.empty_icon = QIcon(".")
+
+        register_all_nodes(BaseGraphicsNode, BaseContent, Socket)
 
         if DEBUG:
             print("Registered nodes:")
