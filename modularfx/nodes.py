@@ -1,4 +1,4 @@
-from modularfx.basenode import *
+from modularfx.nodetypes import *
 from modularfx.registry import register_node, register_many, register_combined, introspect
 
 import gensound.curve
