@@ -31,8 +31,8 @@ class BaseGraphicsNode(QDMGraphicsNode):
     def initAssets(self):
         super().initAssets()
         self.icons = QImage("icons/status_icons.png")
-        self._brush_title = QBrush(self.node.node_colour)
-        self._brush_background = QBrush(self.node.node_colour.lighter(190))
+        self._brush_title = QBrush(SOCKET_COLORS[self.node.node_colour])
+        self._brush_background = QBrush(SOCKET_COLORS[self.node.node_colour].lighter(190))
         self._title_font.setWeight(QFont.Weight.Black)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
@@ -53,8 +53,6 @@ class BaseContent(QDMNodeContentWidget):
 
     def initUI(self):
         self.setAttribute(Qt.WA_TranslucentBackground, True)
-        p = self.palette()
-        p.setColor(QPalette.Window, self.node.node_colour)
         self.layout = QFormLayout()
         self.setLayout(self.layout)
         self.layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
@@ -147,10 +145,6 @@ class BaseContent(QDMNodeContentWidget):
 
 class BaseNode(Node):
     icon = None
-    node_colour = QColor("#FF313131")
-
-    GraphicsNode_class = BaseGraphicsNode
-    NodeContent_class = BaseContent
 
     def __init__(self, scene, name, inputs, outputs):
         self.inputmap = {}
@@ -253,11 +247,11 @@ class ChainableNode(BaseNode):
 
 class CurveNode(ChainableNode):
     chaintype = 1
-    node_colour = SOCKET_COLORS[1]
+    node_colour = 1
 
 class SignalNode(ChainableNode):
     chaintype = 0
-    node_colour = SOCKET_COLORS[0]
+    node_colour = 0
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -275,7 +269,7 @@ class SignalNode(ChainableNode):
 
 class TransformNode(SignalNode):
     inputtypes = [0]
-    node_colour = SOCKET_COLORS[3]
+    node_colour = 3
 
     def __init__(self, scene):
         super().__init__(scene)
