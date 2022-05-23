@@ -297,7 +297,7 @@ class ModularFXWindow(NodeEditorWindow):
             self.mdiArea.setActiveSubWindow(window)
 
 
-def main():
+def gui(filename):
     app = QApplication(sys.argv)
 
     # print(QStyleFactory.keys())
@@ -306,8 +306,13 @@ def main():
     wnd = ModularFXWindow()
     wnd.show()
 
+    if filename is not None:
+        wnd.fileLoad(filename)
+    else:
+        wnd.onFileNew()
+
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-    main()
+    gui(None)
