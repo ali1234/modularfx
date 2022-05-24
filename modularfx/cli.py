@@ -1,12 +1,30 @@
+import ast
 import numpy as np
-from qtpy.QtWidgets import QApplication
-from nodeeditor.node_editor_widget import NodeEditorWidget
-from nodeeditor.node_socket import Socket
+
+from nodeeditor.node_scene import Scene
+
 from modularfx.nodes import register_all_nodes
 from modularfx.registry import get_node_by_id
-from modularfx.graphics import BaseGraphicsNode, BaseContent
 
-sample_rate = 22050
+
+class Content:
+    def __init__(self, node):
+        self.fields = {}
+        self.node = node
+
+    def deserializeField(self, field, value):
+        self.fields[field] = value
+
+    def readField(self, field):
+        x = self.fields[field]
+        if x == '':
+            x = repr(self.node.sig.parameters[field].default)
+            if x == '':
+                return None
+        return ast.literal_eval(x)
+
+    def readSelect(self, select):
+        return self.node.clsgrp[self.fields[select]]
 
 
 def utos(b):
@@ -14,18 +32,16 @@ def utos(b):
 
 
 def render(source, max_amplitude):
-    return source.to_bytes(sample_rate, byte_width=1, max_amplitude=max_amplitude)
+    return source.to_bytes(22050, byte_width=1, max_amplitude=max_amplitude)
 
 
 def cli(filename, output):
-    app = QApplication([])
-    register_all_nodes(BaseGraphicsNode, BaseContent, Socket)
-    ed = NodeEditorWidget()
-    ed.scene.setNodeClassSelector(lambda data: get_node_by_id(data['type_name']))
-    ed.scene.loadFromFile(filename)
-    source = ed.scene.nodes[0].eval()
+    register_all_nodes(None, Content)
+    scene = Scene()
+    scene.setNodeClassSelector(lambda data: get_node_by_id(data['type_name']))
+    scene.loadFromFile(filename)
+    source = scene.nodes[0].eval()
     pcm = render(source, 0.9)
     output.write(utos(pcm).tobytes())
-    # TODO: make none of the above require Qt
     import sys
     assert('PyQt5' not in sys.modules)

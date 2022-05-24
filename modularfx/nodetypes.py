@@ -3,7 +3,13 @@ import operator
 from traceback import print_exc
 
 from nodeeditor.node_node import Node
-from nodeeditor.node_socket import LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM, RIGHT_BOTTOM
+
+LEFT_TOP = 1        #:
+LEFT_CENTER =2      #:
+LEFT_BOTTOM = 3     #:
+RIGHT_TOP = 4       #:
+RIGHT_CENTER = 5    #:
+RIGHT_BOTTOM = 6    #:
 
 
 class BaseNode(Node):
@@ -115,7 +121,8 @@ class SignalNode(ChainableNode):
 
     def __init__(self, scene):
         super().__init__(scene)
-        self.content.button.pressed.connect(self.onPlay)
+        if hasattr(self.content, 'button'):
+            self.content.button.pressed.connect(self.onPlay)
         self.inputs[-1].is_multi_edges = True
 
     def onPlay(self):

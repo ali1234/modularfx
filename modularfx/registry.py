@@ -30,19 +30,19 @@ def create_node(name, bases, **kwargs):
     register_node(type(name, bases, kwargs))
 
 
-def register_many(node, graphic, content, socket, group, items):
+def register_many(node, graphic, content, group, items):
     for name, cls in items.items():
         try:
             sig = inspect.signature(cls)
-            create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, Socket_class=socket, group=group, cls=cls)
+            create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, group=group, cls=cls)
         except InvalidNodeRegistration:
             pass
 
 
-def register_combined(node, graphic, content, socket, group, name, items):
+def register_combined(node, graphic, content, group, name, items):
     try:
         sig = inspect.signature(next(iter(items.values())))
-        create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, Socket_class=socket, group=group, clsgrp=items)
+        create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, group=group, clsgrp=items)
     except InvalidNodeRegistration:
         pass
 

@@ -7,15 +7,15 @@ import gensound.filters
 import gensound.effects
 
 
-def register_all_nodes(graphic, content, socket):
+def register_all_nodes(graphic, content):
 
     register_many(
-        CurveNode, graphic, content, socket, 'Curves',
+        CurveNode, graphic, content, 'Curves',
         introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve'])
     )
 
     register_combined(
-        CurveNode, graphic, content, socket, 'Curves', 'Curve',
+        CurveNode, graphic, content, 'Curves', 'Curve',
         {
             'Line': gensound.curve.Line,
             'Logistic': gensound.curve.Logistic,
@@ -23,12 +23,12 @@ def register_all_nodes(graphic, content, socket):
     )
 
     register_combined(
-        SignalNode, graphic, content, socket, 'Signals', 'Oscillator',
+        SignalNode, graphic, content, 'Signals', 'Oscillator',
         introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
     )
 
     register_combined(
-        SignalNode, graphic, content, socket, 'Signals', 'Noise',
+        SignalNode, graphic, content, 'Signals', 'Noise',
         {
             'Pink': gensound.signals.PinkNoise,
             'White': gensound.signals.WhiteNoise,
@@ -36,16 +36,16 @@ def register_all_nodes(graphic, content, socket):
     )
 
     register_many(
-        TransformNode, graphic, content, socket, 'Effects',
+        TransformNode, graphic, content, 'Effects',
         introspect(gensound.effects, gensound.effects.Transform, ['Transform'])
     )
 
     register_many(
-        TransformNode, graphic, content, socket, 'Filters',
+        TransformNode, graphic, content, 'Filters',
         introspect(gensound.filters, gensound.filters.Filter, ['Filter'])
     )
 
     register_many(
-        TransformNode, graphic, content, socket, 'Transforms',
+        TransformNode, graphic, content, 'Transforms',
         introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
     )
