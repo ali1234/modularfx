@@ -30,19 +30,19 @@ def create_node(name, bases, **kwargs):
     register_node(type(name, bases, kwargs))
 
 
-def register_many(node, graphic, content, group, items):
+def register_many(node, group, items):
     for name, cls in items.items():
         try:
             sig = inspect.signature(cls)
-            create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, group=group, cls=cls)
+            create_node(name, (node, ), sig=sig, group=group, cls=cls)
         except InvalidNodeRegistration:
             pass
 
 
-def register_combined(node, graphic, content, group, name, items):
+def register_combined(node, group, name, items):
     try:
         sig = inspect.signature(next(iter(items.values())))
-        create_node(name, (node, ), sig=sig, GraphicsNode_class=graphic, NodeContent_class=content, group=group, clsgrp=items)
+        create_node(name, (node, ), sig=sig, group=group, clsgrp=items)
     except InvalidNodeRegistration:
         pass
 
@@ -51,3 +51,6 @@ def get_node_by_id(type_name):
     if type_name not in node_registry:
         raise OpCodeNotRegistered(f"Node {type_name} is not registered.")
     return node_registry[type_name]
+
+
+import modularfx.nodes

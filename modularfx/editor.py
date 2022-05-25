@@ -7,9 +7,13 @@ from qtpy.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
+from nodeeditor.node_graphics_node import QDMGraphicsNode
 
 from modularfx.nodelist import NODELIST_MIMETYPE
 from modularfx.registry import node_registry, get_node_by_id
+from modularfx.nodetypes import BaseNode
+from modularfx.graphics import BaseGraphicsNode, BaseContent
+
 
 DEBUG = False
 DEBUG_CONTEXT = False
@@ -31,6 +35,9 @@ class Editor(NodeEditorWidget):
         self.scene.setNodeClassSelector(lambda data: get_node_by_id(data['type_name']))
 
         self._close_event_listeners = []
+
+        self.scene.grScene.DefaultGraphicsNode_class = lambda node: BaseGraphicsNode(node) if isinstance(node, BaseNode) else QDMGraphicsNode(node)
+        self.scene.grScene.DefaultNodeContent_class = lambda node: BaseContent(node) if isinstance(node, BaseNode) else QDMGraphicsNode(node)
 
     def doEvalOutputs(self):
         # try to eval the graph here

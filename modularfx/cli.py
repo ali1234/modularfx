@@ -3,7 +3,6 @@ import numpy as np
 
 from nodeeditor.node_scene import Scene
 
-from modularfx.nodes import register_all_nodes
 from modularfx.registry import get_node_by_id
 
 
@@ -36,7 +35,6 @@ def render(source, max_amplitude):
 
 
 def cli(filename, output):
-    register_all_nodes(None, Content)
     scene = Scene()
     scene.setNodeClassSelector(lambda data: get_node_by_id(data['type_name']))
     scene.loadFromFile(filename)

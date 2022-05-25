@@ -8,7 +8,7 @@ from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox,
 from qtpy.QtCore import Qt, QSignalMapper
 
 from nodeeditor.node_editor_window import NodeEditorWindow
-from nodeeditor.node_node import Node
+from nodeeditor.utils import dumpException
 
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
@@ -21,8 +21,6 @@ from nodeeditor.node_edge_validators import (
 from modularfx.editor import Editor
 from modularfx.nodelist import NodeList
 from modularfx.registry import node_registry, node_groups
-from modularfx.nodes import register_all_nodes
-from modularfx.graphics import BaseContent, BaseGraphicsNode
 
 
 Edge.registerEdgeValidator(edge_validator_debug)
@@ -37,8 +35,6 @@ class ModularFXWindow(NodeEditorWindow):
         self.name_product = 'ModularFX'
 
         self.empty_icon = QIcon(".")
-
-        register_all_nodes(BaseGraphicsNode, BaseContent)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
