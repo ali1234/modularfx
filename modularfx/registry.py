@@ -1,6 +1,8 @@
 import inspect
 from collections import defaultdict
 
+from modularfx.parameters import ParameterStore
+
 
 node_registry = {}
 node_groups = defaultdict(dict)
@@ -19,22 +21,16 @@ def register_node(cls):
     return cls
 
 
-def introspect(module, base, filter=None):
-    return {
-        name: cls for name, cls in module.__dict__.items()
-        if (filter is None or name not in filter) and isinstance(cls, type) and issubclass(cls, base)
-    }
-
-
 def create_node(name, bases, **kwargs):
-    register_node(type(name, bases, kwargs))
+    register_node(ParameterStore.factory(bases))
 
 
 def register_many(node, group, items):
     for name, cls in items.items():
         try:
             sig = inspect.signature(cls)
-            create_node(name, (node, ), sig=sig, group=group, cls=cls)
+            create_node(name, node, group=group)
+
         except InvalidNodeRegistration:
             pass
 

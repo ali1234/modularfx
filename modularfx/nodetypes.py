@@ -3,29 +3,18 @@ import operator
 from traceback import print_exc
 
 from nodeeditor.node_node import Node
+from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_BOTTOM
 
-LEFT_TOP = 1        #:
-LEFT_CENTER =2      #:
-LEFT_BOTTOM = 3     #:
-RIGHT_TOP = 4       #:
-RIGHT_CENTER = 5    #:
-RIGHT_BOTTOM = 6    #:
+from modularfx.parameters import ParameterBase
 
 
-class BaseNode(Node):
+class BaseNode(ParameterBase, Node):
     icon = None
+    _f = None
 
     def __init__(self, scene, name, inputs, outputs):
-        self.inputmap = {}
-        if hasattr(self, 'sig'):
-            auto_inputs = []
-            for n,(k,v) in enumerate(self.sig.parameters.items()):
-                self.inputmap[n] = k
-                self.inputmap[k] = n
-                auto_inputs.append(2)
-            inputs = auto_inputs + inputs
-        super().__init__(scene, name, inputs, outputs)
-        self.markDirty(True)
+        super().__init__(scene, name, [2] * len(self.parameters) + inputs, outputs)
+        self.markDirty()
 
     def initSettings(self):
         super().initSettings()
@@ -42,50 +31,38 @@ class BaseNode(Node):
             y = 0.5 + self.grNode.title_height + (field.geometry().height()/2) + field.geometry().topLeft().y() - self.content.layout.geometry().topLeft().y()
         return [x, y]
 
-    def onInputChanged(self, socket=None):
+    def onInputChanged(self, socket):
         self.markDirty()
         self.markDescendantsDirty()
-        if socket.index in self.inputmap:
-            self.content.hideField(self.inputmap[socket.index], socket.hasAnyEdge())
+        if socket.index < len(self.parameters):
+            self.content.hideField(self.parameters[socket.index].name, socket.hasAnyEdge())
 
-    def onOutputChanged(self, socket=None):
-        self.markDirty()
-        self.markDescendantsDirty()
-
-    def extract(self):
-        args = {}
-        for n, k in enumerate(self.sig.parameters.keys()):
+    def args(self):
+        args = self.parameters.args()
+        for n, (k, v) in enumerate(self.parameters.socket_items()):
             conn = self.getInput(n)
-            if conn is None:
-                args[k] = self.content.readField(k)
-            else:
+            if conn is not None:
                 args[k] = conn.eval()
         return args
 
     def evalImplementation(self):
-        if hasattr(self, 'clsgrp'):
-            return self.content.readSelect('type')(**self.extract())
-        else:
-            return self.cls(**self.extract())
+        return self._f(**self.args())
 
     def eval(self, index=0):
         if self.isDirty():
-            self.value = self.evalImplementation(index)
+            self.value = self.evalImplementation()
             self.markDirty(False)
         return self.value
 
     def serialize(self):
         data = super().serialize()
         data['type_name'] = self.__class__.__name__
-        data['content_data'] = {
-            field: self.content.serializeField(field) for field in self.content.fields.keys()
-        }
+        data['parameters'] = self.parameters.serialize()
         return data
 
     def deserialize(self, data, hashmap, restore_id):
         if super().deserialize(data, hashmap, restore_id):
-            for k, v in data.get('content_data', {}).items():
-                self.content.deserializeField(k, v)
+            self.parameters.deserialize(data['parameters'])
             return True
         else:
             return False
@@ -114,10 +91,13 @@ class ChainableNode(BaseNode):
 class CurveNode(ChainableNode):
     chaintype = 1
     node_colour = 1
+    group = 'Curves'
+
 
 class SignalNode(ChainableNode):
     chaintype = 0
     node_colour = 0
+    group = 'Signals'
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -137,6 +117,7 @@ class SignalNode(ChainableNode):
 class TransformNode(SignalNode):
     inputtypes = [0]
     node_colour = 3
+    group = 'Transforms'
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -144,3 +125,11 @@ class TransformNode(SignalNode):
 
     def evalImplementation(self):
         return reduce(operator.add, (x.eval() for x in self.getInputs(-2))) * super().evalImplementation()
+
+
+class EffectNode(TransformNode):
+    group = 'Effects'
+
+
+class FilterNode(TransformNode):
+    group = 'Filters'

@@ -1,5 +1,6 @@
+from modularfx.parameters import ParameterStore
 from modularfx.nodetypes import *
-from modularfx.registry import register_node, register_many, register_combined, introspect
+from modularfx.registry import register_node
 
 import gensound.curve
 import gensound.signals
@@ -7,43 +8,33 @@ import gensound.filters
 import gensound.effects
 
 
-register_many(
-    CurveNode, 'Curves',
-    introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve'])
-)
+def introspect(module, base, filter=None):
+    return {
+        name: cls for name, cls in module.__dict__.items()
+        if (filter is None or name not in filter) and isinstance(cls, type) and issubclass(cls, base)
+    }
 
-register_combined(
-    CurveNode, 'Curves', 'Curve',
-    {
+
+for name, cls in introspect(gensound.curve, gensound.curve.Curve, ['Curve', 'Line', 'Logistic', 'CompoundCurve', 'MultiCurve']).items():
+    register_node(ParameterStore.install(CurveNode)(cls))
+
+register_node(ParameterStore.install_combo('Curve', CurveNode, {
         'Line': gensound.curve.Line,
         'Logistic': gensound.curve.Logistic,
-    }
-)
+    }))
 
-register_combined(
-    SignalNode, 'Signals', 'Oscillator',
-    introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])
-)
+register_node(ParameterStore.install_combo('Oscillator', SignalNode, introspect(gensound.signals, gensound.signals.Oscillator, ['Oscillator'])))
 
-register_combined(
-    SignalNode, 'Signals', 'Noise',
-    {
+register_node(ParameterStore.install_combo('Noise', SignalNode, {
         'Pink': gensound.signals.PinkNoise,
         'White': gensound.signals.WhiteNoise,
-    }
-)
+    }))
 
-register_many(
-    TransformNode, 'Effects',
-    introspect(gensound.effects, gensound.effects.Transform, ['Transform'])
-)
+for name, cls in introspect(gensound.effects, gensound.effects.Transform, ['Transform']).items():
+    register_node(ParameterStore.install(EffectNode)(cls))
 
-register_many(
-    TransformNode, 'Filters',
-    introspect(gensound.filters, gensound.filters.Filter, ['Filter'])
-)
+for name, cls in introspect(gensound.filters, gensound.filters.Filter, ['Filter']).items():
+    register_node(ParameterStore.install(FilterNode)(cls))
 
-register_many(
-    TransformNode, 'Transforms',
-    introspect(gensound.transforms, gensound.transforms.Transform, ['Transform'])
-)
+for name, cls in introspect(gensound.transforms, gensound.transforms.Transform, ['Transform', 'Convolution']).items():
+    register_node(ParameterStore.install(TransformNode)(cls))

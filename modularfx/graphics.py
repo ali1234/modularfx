@@ -1,15 +1,16 @@
 import ast
 import inspect
 
-from qtpy.QtGui import QImage, QBrush, QFont
+from qtpy.QtGui import QImage, QBrush, QFont, QPalette, QColor
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
+from qtpy.QtWidgets import QWidget, QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
 
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_graphics_socket import SOCKET_COLORS
 
 from modularfx.nodetypes import *
+from modularfx.parameters import ChoiceParamAttr
 
 
 class BaseGraphicsNode(QDMGraphicsNode):
@@ -59,12 +60,11 @@ class BaseContent(QDMNodeContentWidget):
         if isinstance(self.node, SignalNode):
             self.button = QPushButton("Play", self)
             self.layout.addRow(self.button)
-        if hasattr(self.node, 'clsgrp'):
-            self.addSelect('type', self.node.clsgrp)
-        if hasattr(self.node, 'sig'):
-            for k,v in self.node.sig.parameters.items():
-                default = repr(v.default) if v.default != inspect._empty else ""
-                self.addField(k, default)
+        for k, v in self.node.parameters.items():
+            if isinstance(v, ChoiceParamAttr):
+                self.addSelect(k, v)
+            else:
+                self.addField(k, v)
         if isinstance(self.node, TransformNode):
             self.addField('apply', None)
             self.hideField('apply', True)
@@ -87,53 +87,54 @@ class BaseContent(QDMNodeContentWidget):
             self.inputs.append(l)
             self.outputs.append(l)
 
-    def addField(self, label, val):
+    def addField(self, label, attr):
         field = QLineEdit(self)
-        field.setPlaceholderText(val)
         field.setAlignment(Qt.AlignRight)
         sp = field.sizePolicy()
         sp.setRetainSizeWhenHidden(True)
         field.setSizePolicy(sp)
-        field.textChanged.connect(self.onContentChanged)
+        if attr is not None:
+            if attr.default is not inspect._empty:
+                field.setPlaceholderText(repr(attr.default))
+            field.textChanged.connect(lambda: self.onFieldChanged(field, attr))
         self.layout.addRow(label.title(), field)
         self.fields[label] = field
-        self.inputs.append(field)
+        if attr is None or attr.is_socket:
+            self.inputs.append(field)
 
-    def addSelect(self, label, values):
+    def onFieldChanged(self, field, attr):
+        try:
+            t = field.text()
+            if t == "":
+                attr.clear()
+            else:
+                attr.set(ast.literal_eval(field.text()))
+        except (ValueError, SyntaxError) as e:
+            field.setStyleSheet("background-color:#ffaaaa;")
+        else:
+            field.setStyleSheet("")
+        finally:
+            self.node.markDirty()
+            self.node.markDescendantsDirty()
+
+    def addSelect(self, label, attr):
         select = QComboBox(self)
-        for k, v in values.items():
-            select.addItem(k, k)
-        select.currentIndexChanged.connect(self.onContentChanged)
+        sp = select.sizePolicy()
+        sp.setRetainSizeWhenHidden(True)
+        select.setSizePolicy(sp)
+        for k, v in attr.choices.items():
+            select.addItem(k.title(), v)
+        select.currentIndexChanged.connect(lambda: self.onSelectChanged(select, attr))
         self.layout.addRow(label.title(), select)
         self.fields[label] = select
+        if attr.is_socket:
+            self.inputs.append(select)
 
-    def readField(self, field):
-        x = self.fields[field].text()
-        if x == '':
-            x = self.fields[field].placeholderText()
-            if x == '':
-                return None
-        return ast.literal_eval(x)
-
-    def serializeField(self, field):
-        if isinstance(self.fields[field], QComboBox):
-            return self.fields[field].currentData()
-        else:
-            return self.fields[field].text()
-
-    def deserializeField(self, field, value):
-        if isinstance(self.fields[field], QComboBox):
-            self.fields[field].setCurrentIndex(self.fields[field].findData(value))
-        else:
-            if value != self.fields[field].placeholderText():
-                self.fields[field].setText(value)
+    def onSelectChanged(self, select, attr):
+        attr.set(select.currentData())
+        self.node.markDirty()
+        self.node.markDescendantsDirty()
 
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
 
-    def readSelect(self, select):
-        return self.node.clsgrp[self.fields[select].currentData()]
-
-    def onContentChanged(self):
-        self.node.markDirty()
-        self.node.markDescendantsDirty()

@@ -1,113 +1,37 @@
 {
-    "id": 140451470568896,
+    "id": 140090958852928,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 140451203139184,
-            "title": "ADSR",
-            "pos_x": 110.0,
-            "pos_y": -121.0,
-            "inputs": [
-                {
-                    "id": 140451203216336,
-                    "index": 0,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 140451203219072,
-                    "index": 1,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 140451203219120,
-                    "index": 2,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 140451203219168,
-                    "index": 3,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 140451203219216,
-                    "index": 4,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 140451203219264,
-                    "index": 5,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 0
-                },
-                {
-                    "id": 140451203219312,
-                    "index": 6,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 0
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 140451203219360,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 6,
-                    "socket_type": 0
-                }
-            ],
-            "content": {},
-            "type_name": "ADSR",
-            "content_data": {
-                "attack": "2000",
-                "decay": "2000",
-                "sustain": "0.5",
-                "release": "2000",
-                "hold": "",
-                "apply": ""
-            }
-        },
-        {
-            "id": 140451203233200,
+            "id": 140090911190368,
             "title": "Oscillator",
-            "pos_x": -148.0,
-            "pos_y": -93.0,
+            "pos_x": -60.0,
+            "pos_y": -175.0,
             "inputs": [
                 {
-                    "id": 140451203270064,
+                    "id": 140090911283232,
                     "index": 0,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451203270112,
+                    "id": 140090911294224,
                     "index": 1,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451203270160,
+                    "id": 140090911294272,
                     "index": 2,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451203270208,
+                    "id": 140090911294320,
                     "index": 3,
                     "multi_edges": true,
                     "position": 3,
@@ -116,7 +40,7 @@
             ],
             "outputs": [
                 {
-                    "id": 140451203270256,
+                    "id": 140090911294368,
                     "index": 0,
                     "multi_edges": true,
                     "position": 6,
@@ -125,42 +49,39 @@
             ],
             "content": {},
             "type_name": "Oscillator",
-            "content_data": {
-                "type": "Triangle",
-                "frequency": "",
-                "duration": "",
-                "phase": ""
+            "parameters": {
+                "type": "Triangle"
             }
         },
         {
-            "id": 140451128072512,
+            "id": 140090911294656,
             "title": "Curve",
-            "pos_x": -391.0,
-            "pos_y": -151.0,
+            "pos_x": -329.0,
+            "pos_y": -240.0,
             "inputs": [
                 {
-                    "id": 140451128091504,
+                    "id": 140090911295952,
                     "index": 0,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451128091552,
+                    "id": 140090911296000,
                     "index": 1,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451128091216,
+                    "id": 140090911296048,
                     "index": 2,
                     "multi_edges": false,
                     "position": 3,
                     "socket_type": 2
                 },
                 {
-                    "id": 140451128090928,
+                    "id": 140090911296096,
                     "index": 3,
                     "multi_edges": false,
                     "position": 3,
@@ -169,7 +90,7 @@
             ],
             "outputs": [
                 {
-                    "id": 140451128090880,
+                    "id": 140090911296144,
                     "index": 0,
                     "multi_edges": true,
                     "position": 6,
@@ -178,26 +99,100 @@
             ],
             "content": {},
             "type_name": "Curve",
-            "content_data": {
-                "type": "Line",
-                "begin": "220",
-                "end": "880",
-                "duration": "3e2"
+            "parameters": {
+                "begin": 220,
+                "end": 880,
+                "duration": 300.0,
+                "type": "Line"
+            }
+        },
+        {
+            "id": 140090898272560,
+            "title": "ADSR",
+            "pos_x": 261.0,
+            "pos_y": -164.0,
+            "inputs": [
+                {
+                    "id": 140090898314624,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140090898314672,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140090898314720,
+                    "index": 2,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140090898314768,
+                    "index": 3,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140090898314816,
+                    "index": 4,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140090898314864,
+                    "index": 5,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                },
+                {
+                    "id": 140090898314912,
+                    "index": 6,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140090898314960,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 0
+                }
+            ],
+            "content": {},
+            "type_name": "ADSR",
+            "parameters": {
+                "attack": 2000,
+                "decay": 1000,
+                "sustain": 0.75,
+                "release": 2000
             }
         }
     ],
     "edges": [
         {
-            "id": 140451203270304,
+            "id": 140090911344336,
             "edge_type": 2,
-            "start": 140451203270256,
-            "end": 140451203219264
+            "start": 140090911296144,
+            "end": 140090911283232
         },
         {
-            "id": 140451128091600,
+            "id": 140090898315008,
             "edge_type": 2,
-            "start": 140451128090880,
-            "end": 140451203270064
+            "start": 140090911294368,
+            "end": 140090898314864
         }
     ]
 }
