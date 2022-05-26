@@ -12,8 +12,8 @@ class BaseNode(ParameterBase, Node):
     icon = None
     _f = None
 
-    def __init__(self, scene, name, inputs, outputs):
-        super().__init__(scene, name, [2] * len(self.parameters) + inputs, outputs)
+    def __init__(self, scene, inputs, outputs):
+        super().__init__(scene, self.__class__.__name__, [2] * len(self.parameters) + inputs, outputs)
         self.markDirty()
 
     def initSettings(self):
@@ -73,7 +73,7 @@ class ChainableNode(BaseNode):
     chaintype = 0
 
     def __init__(self, scene):
-        super().__init__(scene, self.__class__.__name__, self.inputtypes + [self.chaintype], [self.chaintype])
+        super().__init__(scene, self.inputtypes + [self.chaintype], [self.chaintype])
 
     def chain(self, s):
         i = self.getInputs(-1)
@@ -133,3 +133,22 @@ class EffectNode(TransformNode):
 
 class FilterNode(TransformNode):
     group = 'Filters'
+
+
+class SinkNode(BaseNode):
+    inputtypes = [0]
+    node_colour = 6
+    group = 'Sinks'
+
+    def __init__(self, scene):
+        super().__init__(scene, self.inputtypes, [])
+        self.inputs[-1].is_multi_edges = True
+
+    def evalImplementation(self):
+        return reduce(operator.add, (x.eval() for x in self.getInputs(-2)))
+
+    def onPlay(self):
+        pass
+
+    def onSave(self):
+        pass
