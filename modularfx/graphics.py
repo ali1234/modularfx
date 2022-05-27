@@ -57,35 +57,45 @@ class BaseContent(QDMNodeContentWidget):
         self.fields = {}
         self.inputs = []
         self.outputs = []
-        if isinstance(self.node, SignalNode):
-            self.button = QPushButton("Play", self)
-            self.layout.addRow(self.button)
+        for k, v in self.node.buttons.items():
+            button = QPushButton(k, self)
+            button.pressed.connect(getattr(self.node, v))
+            self.layout.addRow(button)
+            self.inputs.append(button)
         for k, v in self.node.parameters.items():
             if isinstance(v, ChoiceParamAttr):
                 self.addSelect(k, v)
             else:
                 self.addField(k, v)
         if isinstance(self.node, TransformNode):
-            self.addField('apply', None)
-            self.hideField('apply', True)
+            self.addLabelRow('Apply', None)
         if isinstance(self.node, ChainableNode):
-            # add an invisible line edit to make this row the right height
-            spacer = QLineEdit(self)
-            sp = spacer.sizePolicy()
-            sp.setRetainSizeWhenHidden(True)
-            spacer.setSizePolicy(sp)
-            spacer.setVisible(False)
-            spacer.setMinimumWidth(1)
-            spacer.setFixedWidth(1)
-            o = QLabel('Output', self)
+            self.addLabelRow('Concat', 'Output')
+        if isinstance(self.node, TriggerNode):
+            self.addLabelRow(None, 'Trigger')
+            for o in self.node.outputs:
+                self.addLabelRow(None, o)
+
+    def addLabelRow(self, inlabel=None, outlabel=None):
+        # add an invisible line edit to make this row the right height
+        spacer = QLineEdit(self)
+        sp = spacer.sizePolicy()
+        sp.setRetainSizeWhenHidden(True)
+        spacer.setSizePolicy(sp)
+        spacer.setVisible(False)
+        spacer.setMinimumWidth(1)
+        spacer.setFixedWidth(1)
+        l = QHBoxLayout(self)
+        l.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        l.addWidget(spacer)
+        if outlabel is not None:
+            o = QLabel(outlabel, self)
             o.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-            l = QHBoxLayout(self)
-            l.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-            l.addWidget(spacer)
             l.addWidget(o)
-            self.layout.addRow('Concat', l)
-            self.inputs.append(l)
             self.outputs.append(l)
+        self.layout.addRow(inlabel, l)
+        if inlabel is not None:
+            self.inputs.append(l)
 
     def addField(self, label, attr):
         field = QLineEdit(self)

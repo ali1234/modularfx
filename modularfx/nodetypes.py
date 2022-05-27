@@ -8,13 +8,34 @@ from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_BOTTOM
 from modularfx.parameters import ParameterBase
 
 
-class BaseNode(ParameterBase, Node):
+class UI(type):
+    def __init__(cls, name, bases, attrs):
+        super().__init__(cls)
+        cls.buttons = getattr(cls, 'buttons', {}).copy()
+        print(cls)
+        for k, v in attrs.items():
+            if callable(v) and hasattr(v, 'label'):
+                print(v.label)
+                cls.buttons[v.label] = k
+
+    @classmethod
+    def button(cls, label):
+        def _button(f):
+            f.label = label
+            return f
+        return _button
+
+
+class BaseNode(ParameterBase, Node, metaclass=UI):
     icon = None
     _f = None
+    buttons = {}
 
     def __init__(self, scene, inputs, outputs):
-        super().__init__(scene, self.__class__.__name__, [2] * len(self.parameters) + inputs, outputs)
+        super().__init__(scene, self.__class__.__name__, [5] * len(self.buttons) + [2] * len(self.parameters) + inputs, outputs)
         self.markDirty()
+        print(self, self.buttons)
+
 
     def initSettings(self):
         super().initSettings()
@@ -34,15 +55,16 @@ class BaseNode(ParameterBase, Node):
     def onInputChanged(self, socket):
         self.markDirty()
         self.markDescendantsDirty()
-        if socket.index < len(self.parameters):
-            self.content.hideField(self.parameters[socket.index].name, socket.hasAnyEdge())
+        index = socket.index - len(self.buttons)
+        if 0 <= index < len(self.parameters):
+            self.content.hideField(self.parameters[index].name, socket.hasAnyEdge())
 
     def args(self):
         args = self.parameters.args()
         for n, (k, v) in enumerate(self.parameters.socket_items()):
-            conn = self.getInput(n)
+            conn, index = self.getInputWithSocketIndex(n + len(self.buttons))
             if conn is not None:
-                args[k] = conn.eval()
+                args[k] = conn.eval(index)
         return args
 
     def evalImplementation(self):
@@ -101,10 +123,9 @@ class SignalNode(ChainableNode):
 
     def __init__(self, scene):
         super().__init__(scene)
-        if hasattr(self.content, 'button'):
-            self.content.button.pressed.connect(self.onPlay)
         self.inputs[-1].is_multi_edges = True
 
+    @UI.button('Play')
     def onPlay(self):
         try:
             self.eval().play()
@@ -112,6 +133,10 @@ class SignalNode(ChainableNode):
             self.markDescendantsDirty()
             self.grNode.setToolTip(str(e))
             print_exc()
+
+    @UI.button('Something Else')
+    def onOther(self):
+        print("Triggered!")
 
 
 class TransformNode(SignalNode):
@@ -152,3 +177,22 @@ class SinkNode(BaseNode):
 
     def onSave(self):
         pass
+
+
+
+class TriggerNode(BaseNode):
+    node_colour = 5
+    group = 'Triggers'
+
+    def __init__(self, scene, outputs=None):
+        if outputs is None:
+            outputs = []
+        self.outputs = outputs
+        super().__init__(scene, [], [5] + ([2]*len(self.outputs)))
+
+    def trigger(self):
+        for e in self.outputs[0].edges:
+            node = e.end_socket.node
+            index = e.end_socket.index
+            cb = list(node.buttons.values())[index]
+            getattr(node, cb)()
