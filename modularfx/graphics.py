@@ -148,3 +148,5 @@ class BaseContent(QDMNodeContentWidget):
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
 
+BaseNode.GraphicsNode_class = BaseGraphicsNode
+BaseNode.NodeContent_class = BaseContent
