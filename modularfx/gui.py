@@ -4,7 +4,7 @@ from traceback import print_exc
 from qtpy.QtWidgets import QApplication
 
 from qtpy.QtGui import QIcon, QKeySequence
-from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
+from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog, QActionGroup
 from qtpy.QtCore import Qt, QSignalMapper
 
 from nodeeditor.node_editor_window import NodeEditorWindow
@@ -48,6 +48,9 @@ class ModularFXWindow(NodeEditorWindow):
         self.mdiArea.subWindowActivated.connect(self.updateMenus)
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
+
+        self.exampleMapper = QSignalMapper(self)
+        self.exampleMapper.mapped[str].connect(self.fileLoad)
 
         self.createNodesDock()
 
@@ -159,8 +162,10 @@ class ModularFXWindow(NodeEditorWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.examplesMenu = self.helpMenu.addMenu("&Examples")
         expath = pathlib.Path(__file__).parent / 'examples'
-        for f in expath.glob('*.mfx'):
-            self.examplesMenu.addAction(QAction(f.stem.title(), self, triggered=lambda: self.fileLoad(str(f))))
+        for n, f in enumerate(expath.glob('*.mfx')):
+            act = self.examplesMenu.addAction(f.stem.title())
+            act.triggered.connect(self.exampleMapper.map)
+            self.exampleMapper.setMapping(act, str(f))
         self.helpMenu.addSeparator()
         self.helpMenu.addAction(self.actAbout)
 

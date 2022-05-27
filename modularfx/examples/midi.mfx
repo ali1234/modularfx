@@ -1,0 +1,263 @@
+{
+    "id": 140291150568896,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 140291147540080,
+            "title": "MIDI",
+            "pos_x": -493.0,
+            "pos_y": -259.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 140291147604752,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140291147607488,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147607536,
+                    "index": 2,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 2
+                }
+            ],
+            "content": {},
+            "type_name": "MIDI",
+            "parameters": {}
+        },
+        {
+            "id": 140291147624656,
+            "title": "Oscillator",
+            "pos_x": -299.0,
+            "pos_y": -107.0,
+            "inputs": [
+                {
+                    "id": 140291147671104,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140291147671200,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147671248,
+                    "index": 2,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147671296,
+                    "index": 3,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147671344,
+                    "index": 4,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140291147671392,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 0
+                }
+            ],
+            "content": {},
+            "type_name": "Oscillator",
+            "parameters": {
+                "duration": 300.0,
+                "type": "Square"
+            }
+        },
+        {
+            "id": 140291147671440,
+            "title": "ADSR",
+            "pos_x": 291.0,
+            "pos_y": -159.0,
+            "inputs": [
+                {
+                    "id": 140291147672880,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140291147672976,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147673024,
+                    "index": 2,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147673072,
+                    "index": 3,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147673120,
+                    "index": 4,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147673168,
+                    "index": 5,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140291147673216,
+                    "index": 6,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                },
+                {
+                    "id": 140291147673264,
+                    "index": 7,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140291147673312,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 0
+                }
+            ],
+            "content": {},
+            "type_name": "ADSR",
+            "parameters": {
+                "attack": 2000,
+                "decay": 2000,
+                "sustain": 0.5,
+                "release": 2000
+            }
+        },
+        {
+            "id": 140290881571328,
+            "title": "Vibrato",
+            "pos_x": -3.0,
+            "pos_y": -61.0,
+            "inputs": [
+                {
+                    "id": 140290800426576,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140290800426672,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140290800426720,
+                    "index": 2,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140290800426768,
+                    "index": 3,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                },
+                {
+                    "id": 140290800426816,
+                    "index": 4,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140290800426864,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 0
+                }
+            ],
+            "content": {},
+            "type_name": "Vibrato",
+            "parameters": {
+                "frequency": 10,
+                "width": 0.5
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": 140290881386048,
+            "edge_type": 2,
+            "start": 140291147607536,
+            "end": 140291147671200
+        },
+        {
+            "id": 140290881562944,
+            "edge_type": 2,
+            "start": 140291147604752,
+            "end": 140291147672880
+        },
+        {
+            "id": 140290800426528,
+            "edge_type": 2,
+            "start": 140290800426864,
+            "end": 140291147673216
+        },
+        {
+            "id": 140290748520096,
+            "edge_type": 2,
+            "start": 140291147671392,
+            "end": 140290800426768
+        }
+    ]
+}

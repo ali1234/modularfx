@@ -134,10 +134,6 @@ class SignalNode(ChainableNode):
             self.grNode.setToolTip(str(e))
             print_exc()
 
-    @UI.button('Something Else')
-    def onOther(self):
-        print("Triggered!")
-
 
 class TransformNode(SignalNode):
     inputtypes = [0]
