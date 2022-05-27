@@ -120,11 +120,12 @@ class Polyphonic(SinkNode):
     def init_mixer(self):
         import pygame as pg
         pg.mixer.quit()
-        pg.mixer.init(self.freq, self.size)
+        pg.mixer.init(self.freq, self.size, 1)
 
     @UI.button('Play')
     def onPlay(self):
         import pygame as pg
         src = self.getInput(-1).eval()
+        print(pg.mixer.get_init())
         snd = pg.mixer.Sound(src.to_bytes(sample_rate=self.freq, byte_width=2, max_amplitude=self.parameters.volume.value))
         snd.play()
