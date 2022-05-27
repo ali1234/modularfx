@@ -126,6 +126,5 @@ class Polyphonic(SinkNode):
     def onPlay(self):
         import pygame as pg
         src = self.getInput(-1).eval()
-        print(pg.mixer.get_init())
         snd = pg.mixer.Sound(src.to_bytes(sample_rate=self.freq, byte_width=2, max_amplitude=self.parameters.volume.value))
         snd.play()

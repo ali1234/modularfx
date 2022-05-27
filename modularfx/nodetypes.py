@@ -12,10 +12,8 @@ class UI(type):
     def __init__(cls, name, bases, attrs):
         super().__init__(cls)
         cls.buttons = getattr(cls, 'buttons', {}).copy()
-        print(cls)
         for k, v in attrs.items():
             if callable(v) and hasattr(v, 'label'):
-                print(v.label)
                 cls.buttons[v.label] = k
 
     @classmethod
@@ -34,7 +32,6 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
     def __init__(self, scene, inputs, outputs):
         super().__init__(scene, self.__class__.__name__, [5] * len(self.buttons) + [2] * len(self.parameters) + inputs, outputs)
         self.markDirty()
-        print(self, self.buttons)
 
     def initSettings(self):
         super().initSettings()
