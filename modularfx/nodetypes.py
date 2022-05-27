@@ -175,13 +175,6 @@ class SinkNode(BaseNode):
     def evalImplementation(self):
         return reduce(operator.add, (x.eval() for x in self.getInputs(-2)))
 
-    def onPlay(self):
-        pass
-
-    def onSave(self):
-        pass
-
-
 
 class TriggerNode(BaseNode):
     node_colour = 5

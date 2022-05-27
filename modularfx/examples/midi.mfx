@@ -6,8 +6,8 @@
         {
             "id": 140291147540080,
             "title": "MIDI",
-            "pos_x": -642.0,
-            "pos_y": -283.0,
+            "pos_x": -741.0,
+            "pos_y": -302.0,
             "inputs": [],
             "outputs": [
                 {
@@ -39,8 +39,8 @@
         {
             "id": 140291147624656,
             "title": "Oscillator",
-            "pos_x": -198.0,
-            "pos_y": -203.0,
+            "pos_x": -341.0,
+            "pos_y": -229.0,
             "inputs": [
                 {
                     "id": 140291147671104,
@@ -90,15 +90,15 @@
             "content": {},
             "type_name": "Oscillator",
             "parameters": {
-                "duration": 300.0,
-                "type": "Square"
+                "duration": 400.0,
+                "type": "Triangle"
             }
         },
         {
             "id": 140291147671440,
             "title": "ADSR",
-            "pos_x": 436.0,
-            "pos_y": -284.0,
+            "pos_x": 234.0,
+            "pos_y": -186.0,
             "inputs": [
                 {
                     "id": 140291147672880,
@@ -178,8 +178,8 @@
         {
             "id": 140290881571328,
             "title": "Vibrato",
-            "pos_x": 143.0,
-            "pos_y": -175.0,
+            "pos_x": -56.0,
+            "pos_y": -92.0,
             "inputs": [
                 {
                     "id": 140290800426576,
@@ -236,8 +236,8 @@
         {
             "id": 140111632377120,
             "title": "Math",
-            "pos_x": -477.0,
-            "pos_y": -40.0,
+            "pos_x": -594.0,
+            "pos_y": -120.0,
             "inputs": [
                 {
                     "id": 140111632378128,
@@ -267,14 +267,14 @@
             "type_name": "Math",
             "parameters": {
                 "function": "Multiply",
-                "b": 1.333
+                "b": 2
             }
         },
         {
             "id": 140111632379808,
             "title": "Oscillator",
-            "pos_x": -196.0,
-            "pos_y": 41.0,
+            "pos_x": -337.0,
+            "pos_y": 13.0,
             "inputs": [
                 {
                     "id": 140111632565392,
@@ -324,8 +324,42 @@
             "content": {},
             "type_name": "Oscillator",
             "parameters": {
-                "duration": 300.0
+                "duration": 400.0,
+                "type": "Triangle"
             }
+        },
+        {
+            "id": 139832300339600,
+            "title": "Polyphonic",
+            "pos_x": 515.0,
+            "pos_y": -304.0,
+            "inputs": [
+                {
+                    "id": 139832300342528,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 139832300342576,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 139832300342624,
+                    "index": 2,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "type_name": "Polyphonic",
+            "parameters": {}
         }
     ],
     "edges": [
@@ -334,12 +368,6 @@
             "edge_type": 2,
             "start": 140291147607536,
             "end": 140291147671200
-        },
-        {
-            "id": 140290881562944,
-            "edge_type": 2,
-            "start": 140291147604752,
-            "end": 140291147672880
         },
         {
             "id": 140290800426528,
@@ -370,6 +398,18 @@
             "edge_type": 2,
             "start": 140111632378224,
             "end": 140111632565440
+        },
+        {
+            "id": 139832300342720,
+            "edge_type": 2,
+            "start": 140291147604752,
+            "end": 139832300342528
+        },
+        {
+            "id": 139832300342672,
+            "edge_type": 2,
+            "start": 140291147673312,
+            "end": 139832300342624
         }
     ]
 }

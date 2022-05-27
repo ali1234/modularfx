@@ -69,6 +69,8 @@ class BaseContent(QDMNodeContentWidget):
                 self.addField(k, v)
         if isinstance(self.node, TransformNode):
             self.addLabelRow('Apply', None)
+        if isinstance(self.node, SinkNode):
+            self.addLabelRow('Sink', None)
         if isinstance(self.node, ChainableNode):
             self.addLabelRow('Concat', 'Output')
         if isinstance(self.node, GeneralNode):

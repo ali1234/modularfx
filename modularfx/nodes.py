@@ -1,6 +1,6 @@
 import operator, math
 
-from modularfx.parameters import ParameterStore
+from modularfx.parameters import ParameterStore, Parameter
 from modularfx.nodetypes import *
 from modularfx.registry import register_node
 
@@ -103,3 +103,28 @@ def NoteToFrequency(note):
 @ParameterStore.install(GeneralNode)
 def Transpose(frequency, semitones):
     return frequency * (1.05946309436 ** semitones)
+
+
+@register_node
+class Polyphonic(SinkNode):
+    Parameters = ParameterStore.extend({
+        'volume': Parameter(0.7, float)
+    })
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.freq = 44100
+        self.size = -16
+        self.init_mixer()
+
+    def init_mixer(self):
+        import pygame as pg
+        pg.mixer.quit()
+        pg.mixer.init(self.freq, self.size)
+
+    @UI.button('Play')
+    def onPlay(self):
+        import pygame as pg
+        src = self.getInput(-1).eval()
+        snd = pg.mixer.Sound(src.to_bytes(sample_rate=self.freq, byte_width=2, max_amplitude=self.parameters.volume.value))
+        snd.play()
