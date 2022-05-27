@@ -53,7 +53,7 @@ class Button(TriggerNode):
 class MIDI(TriggerNode):
 
     def __init__(self, scene):
-        super().__init__(scene, ['Note', 'Frequency'])
+        super().__init__(scene, ['Note', 'Frequency', 'Velocity'])
         import rtmidi
         self.midiin = rtmidi.MidiIn()
         self.midiin.open_port(0, "ModularFX")
@@ -71,9 +71,9 @@ class MIDI(TriggerNode):
         message, time = event
         if message[0] == 144:
             print(message)
+            self.data = [message[1], self.miditofreq(message[1]), message[2]]
             self.markDirty()
             self.markDescendantsDirty()
-            self.data = [message[1], self.miditofreq(message[1])]
             self.trigger()
 
 
