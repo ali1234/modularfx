@@ -152,12 +152,12 @@ class ParameterStore:
             params = {}
             for k, v in inspect.signature(f).parameters.items():
                 if k in kwargs:
-                    params[k] = ChoiceParameter(next(iter(kwargs[k])), kwargs[k])
+                    params[k] = ChoiceParameter(next(iter(kwargs[k].values())), kwargs[k])
                 else:
                     params[k] = Parameter(v.default, v.annotation)
 
             return type(f.__name__, (node_type,), {
-                '_f': f, 'Parameters': cls.extend(params)
+                '_f': staticmethod(f), 'Parameters': cls.extend(params)
             })
 
         return _factory
@@ -170,7 +170,7 @@ class ParameterStore:
         }
         for k, v in inspect.signature(f).parameters.items():
             if k in kwargs:
-                params[k] = ChoiceParameter(next(iter(kwargs[k])), kwargs[k])
+                params[k] = ChoiceParameter(next(iter(kwargs[k].values())), kwargs[k])
             else:
                 params[k] = Parameter(v.default, v.annotation)
 

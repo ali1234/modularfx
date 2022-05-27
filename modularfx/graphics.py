@@ -71,6 +71,8 @@ class BaseContent(QDMNodeContentWidget):
             self.addLabelRow('Apply', None)
         if isinstance(self.node, ChainableNode):
             self.addLabelRow('Concat', 'Output')
+        if isinstance(self.node, GeneralNode):
+            self.addLabelRow(None, 'Output')
         if isinstance(self.node, TriggerNode):
             self.addLabelRow(None, 'Trigger')
             for o in self.node.outputs:

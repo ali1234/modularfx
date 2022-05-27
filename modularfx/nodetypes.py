@@ -36,7 +36,6 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
         self.markDirty()
         print(self, self.buttons)
 
-
     def initSettings(self):
         super().initSettings()
         self.input_socket_position = LEFT_BOTTOM
@@ -88,6 +87,14 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
             return True
         else:
             return False
+
+
+class GeneralNode(BaseNode):
+    group = 'General'
+    node_colour = 2
+
+    def __init__(self, scene):
+        super().__init__(scene, [], [2])
 
 
 class ChainableNode(BaseNode):

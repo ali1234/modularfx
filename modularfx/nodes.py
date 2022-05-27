@@ -1,3 +1,5 @@
+import operator, math
+
 from modularfx.parameters import ParameterStore
 from modularfx.nodetypes import *
 from modularfx.registry import register_node
@@ -73,3 +75,31 @@ class MIDI(TriggerNode):
             self.markDescendantsDirty()
             self.data = [message[1], self.miditofreq(message[1])]
             self.trigger()
+
+
+@register_node
+@ParameterStore.install(GeneralNode)
+def Value(value):
+    return value
+
+
+@register_node
+@ParameterStore.install(GeneralNode, function={
+    'Add': operator.add, 'Subtract': operator.sub, 'Multiply': operator.mul,
+    'Divide': operator.truediv, 'Integer Divide': operator.floordiv,
+    'Power': operator.pow, 'Log': math.log
+})
+def Math(function, a, b):
+    return function(a, b)
+
+
+@register_node
+@ParameterStore.install(GeneralNode)
+def NoteToFrequency(note):
+    return 440 * (2 ** ((note - 69) / 12))
+
+
+@register_node
+@ParameterStore.install(GeneralNode)
+def Transpose(frequency, semitones):
+    return frequency * (1.05946309436 ** semitones)
