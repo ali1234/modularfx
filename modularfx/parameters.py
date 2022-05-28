@@ -108,7 +108,6 @@ class ParameterStoreMeta(type):
                 cls._keys.append(name)
                 if value._socket:
                     cls._socket_keys.append(name)
-        print(cls, name, cls._socket_keys)
 
 
 class ParameterStore(metaclass=ParameterStoreMeta):

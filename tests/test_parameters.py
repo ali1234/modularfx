@@ -44,9 +44,12 @@ class TestBase(unittest.TestCase):
         self.assertEqual(x.parameters.a.name, 'a')
         self.assertEqual(x.parameters.b.name, 'b')
 
+    def test_len(self):
+        x = self.parameters_class()
+        self.assertEqual(len(x.parameters), 2)
+
     def test_indexing(self):
         x = self.parameters_class()
-        print(x.parameters._socket_keys)
         self.assertEqual(x.parameters[0].name, 'a')
 
     def test_values(self):
@@ -180,6 +183,10 @@ class TestExtendWrapped(TestBase):
 
     def test_c(self):
         self.assertEqual(self.parameters_instance.parameters.c.default, 'hello')
+
+    def test_len(self):
+        x = self.parameters_class()
+        self.assertEqual(len(x.parameters), 3)
 
 
 # now repeat all tests, but with a subclass of ParametersObject
