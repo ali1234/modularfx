@@ -198,9 +198,3 @@ class ParameterBase:
         if not hasattr(self, '_parameters'):
             self._parameters = self.Parameters(self)
         return self._parameters
-
-
-class ParametersObject(ParameterBase):
-    _f = lambda: None
-    def __call__(self):
-        return self._f(**self.parameters.args())

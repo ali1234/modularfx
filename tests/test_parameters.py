@@ -1,7 +1,19 @@
 import unittest
 
-from modularfx.parameters import ParametersObject, ParameterStore, Parameter
+from modularfx.parameters import ParameterBase, ParameterStore, Parameter
 
+
+class ParametersObject(ParameterBase):
+    """Mock object to install parameters into"""
+    _f = lambda: None
+
+    def __call__(self):
+        return self._f(**self.parameters.args())
+
+
+class ParametersObjectEx(ParametersObject):
+    """Mock object that extends ParametersObject"""
+    pass
 
 
 class TestBase(unittest.TestCase):
@@ -170,10 +182,7 @@ class TestExtendWrapped(TestBase):
         self.assertEqual(self.parameters_instance.parameters.c.default, 'hello')
 
 
-# now repeat all tests, but with a subclass of base_type
-class ParametersObjectEx(ParametersObject):
-    pass
-
+# now repeat all tests, but with a subclass of ParametersObject
 
 class TestBaseEx(TestBase):
     base_type = ParametersObjectEx
