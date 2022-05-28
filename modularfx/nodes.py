@@ -107,9 +107,8 @@ def Transpose(frequency, semitones):
 
 @register_node
 class Polyphonic(SinkNode):
-    Parameters = ParameterStore.extend({
-        'volume': Parameter(0.7, float)
-    })
+    class Parameters(ParameterStore):
+        volume = Parameter(0.7, float)
 
     def __init__(self, scene):
         super().__init__(scene)

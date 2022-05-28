@@ -38,9 +38,17 @@ class ParamAttr:
         if hasattr(self._store._node, 'content') and self._store._node.content is not None:
             self._store._node.content.fields[self._param._name].setText(repr(value))
 
+    @value.setter
+    def value(self, v):
+        self.set(v)
+
     def clear(self):
         if self._param._name in self._store._values:
             del self._store._values[self._param._name]
+
+    @value.deleter
+    def value(self):
+        self.clear()
 
     def deserialize(self, value):
         self.set(value)
@@ -90,11 +98,23 @@ class ChoiceParameter(Parameter):
         self._reverse_choices = {v: k for k, v in choices.items()}
 
 
-class ParameterStore:
+class ParameterStoreMeta(type):
+    def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+        cls._keys = cls._keys.copy()
+        cls._socket_keys = cls._socket_keys.copy()
+        for name, value in attrs.items():
+            if isinstance(value, Parameter):
+                cls._keys.append(name)
+                if value._socket:
+                    cls._socket_keys.append(name)
+        print(cls, name, cls._socket_keys)
+
+
+class ParameterStore(metaclass=ParameterStoreMeta):
     _f = None
     _keys = []
     _socket_keys = []
-
     def __init__(self, node):
         self._values = {}
         self._node = node
@@ -137,15 +157,6 @@ class ParameterStore:
         return {k: v.value for k, v in self.items()}
 
     @classmethod
-    def extend(cls, params, name='Parameters'):
-        socket_keys = [k for k, v in params.items() if v._socket]
-        return type(name, (cls,), {
-                '_keys': params.keys(),
-                '_socket_keys': socket_keys,
-                **params
-        })
-
-    @classmethod
     def install(cls, node_type, **kwargs):
         def _factory(f):
             params = {}
@@ -156,7 +167,7 @@ class ParameterStore:
                     params[k] = Parameter(v.default, v.annotation)
 
             return type(f.__name__, (node_type,), {
-                '_f': staticmethod(f), 'Parameters': cls.extend(params)
+                '_f': staticmethod(f), 'Parameters': type('Parameters', (getattr(node_type, 'Parameters', cls), ), params)
             })
 
         return _factory
@@ -175,7 +186,7 @@ class ParameterStore:
 
         return type(name, (node_type,), {
             '_f': property(lambda self: lambda type, **kwargs: self.parameters.type.value(**kwargs)),
-            'Parameters': cls.extend(params)
+            'Parameters': type('Parameters', (getattr(node_type, 'Parameters', cls), ), params)
         })
 
 
@@ -193,5 +204,3 @@ class ParametersObject(ParameterBase):
     _f = lambda: None
     def __call__(self):
         return self._f(**self.parameters.args())
-
-
