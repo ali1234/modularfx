@@ -1,5 +1,4 @@
 import inspect
-from typing import Union
 
 
 class ParamAttr:
@@ -36,7 +35,7 @@ class ParamAttr:
 
     def set(self, value):
         self._store._values[self._param._name] = value
-        if self._store._node.content is not None:
+        if hasattr(self._store._node, 'content') and self._store._node.content is not None:
             self._store._node.content.fields[self._param._name].setText(repr(value))
 
     def clear(self):
@@ -188,3 +187,11 @@ class ParameterBase:
         if not hasattr(self, '_parameters'):
             self._parameters = self.Parameters(self)
         return self._parameters
+
+
+class ParametersObject(ParameterBase):
+    _f = lambda: None
+    def __call__(self):
+        return self._f(**self.parameters.args())
+
+
