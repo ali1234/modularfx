@@ -30,6 +30,13 @@
                     "multi_edges": true,
                     "position": 6,
                     "socket_type": 2
+                },
+                {
+                    "id": 140650394708480,
+                    "index": 3,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 2
                 }
             ],
             "content": {},
@@ -360,6 +367,32 @@
             "content": {},
             "type_name": "Polyphonic",
             "parameters": {}
+        },
+        {
+            "id": 140649737431792,
+            "title": "Inspector",
+            "pos_x": 595.0,
+            "pos_y": 22.0,
+            "inputs": [
+                {
+                    "id": 140649737432128,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140649737432176,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "type_name": "Inspector",
+            "parameters": {}
         }
     ],
     "edges": [
@@ -410,6 +443,12 @@
             "edge_type": 2,
             "start": 140291147673312,
             "end": 139832300342624
+        },
+        {
+            "id": 140649737432320,
+            "edge_type": 2,
+            "start": 140291147673312,
+            "end": 140649737432176
         }
     ]
 }
