@@ -125,7 +125,7 @@ class GeneralNode(BaseNode):
         super().__init__(scene, [], [2])
 
     def code(self, index=0):
-        return self.eval(index)
+        return repr(self.eval(index))
 
 
 class ChainableNode(BaseNode):
