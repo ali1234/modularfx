@@ -86,7 +86,10 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
         )
 
     def code_impl(self, index=0):
-        return self.code_format(self._f, **self.code_args(index))
+        if callable(self._f):
+            return self.code_format(self._f, **self.code_args(index))
+        else:
+            return ''
 
     def code(self, index=0):
         return self.code_impl(index)
