@@ -64,6 +64,9 @@ class MIDI(TriggerNode):
     def eval(self, index=0):
         return self.data[index-1]
 
+    def code(self, index=0):
+        return self.data[index-1]
+
     def miditofreq(self, midi):
         return 440 * (2**((midi-69)/12))
 

@@ -124,6 +124,9 @@ class GeneralNode(BaseNode):
     def __init__(self, scene):
         super().__init__(scene, [], [2])
 
+    def code(self, index=0):
+        return self.eval(index)
+
 
 class ChainableNode(BaseNode):
     inputtypes = []
