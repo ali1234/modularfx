@@ -1,4 +1,5 @@
 from functools import reduce
+import inspect
 import operator
 from traceback import print_exc
 
@@ -69,6 +70,27 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
                 args[k] = conn.eval(index)
         return args
 
+    def code_args(self, index=0):
+        args = self.parameters.args()
+        for n, (k, v) in enumerate(self.parameters.socket_items()):
+            conn, index = self.getInputWithSocketIndex(n + len(self.buttons))
+            if conn is not None:
+                args[k] = conn.code(index)
+        return {k: v for k, v in args.items() if v is not inspect._empty}
+
+    def code_format(self, f, **kwargs):
+        return '{}.{}({})'.format(
+            f.__module__,
+            f.__name__,
+            ', '.join(f'{k} = {v}' for k, v in kwargs.items())
+        )
+
+    def code_impl(self, index=0):
+        return self.code_format(self._f, **self.code_args(index))
+
+    def code(self, index=0):
+        return self.code_impl(index)
+
     def evalImplementation(self):
         return self._f(**self.args())
 
@@ -119,6 +141,16 @@ class ChainableNode(BaseNode):
             self.markDirty(False)
         return self.value
 
+    def code(self, index=0):
+        i = [x.code() for x in self.getInputs(-1)]
+        if len(i) > 1:
+            chain = '(' + ' + '.join(i) + ') | '
+        elif len(i) == 1:
+            chain = i[0] + ' | '
+        else:
+            chain = ''
+        return chain + self.code_impl(index)
+
 
 class CurveNode(ChainableNode):
     chaintype = 1
@@ -156,6 +188,14 @@ class TransformNode(SignalNode):
 
     def evalImplementation(self):
         return reduce(operator.add, (x.eval() for x in self.getInputs(-2))) * super().evalImplementation()
+
+    def code_impl(self, index=0):
+        chain = [x.code() for x in self.getInputs(-2)]
+        if len(chain) > 0:
+            chain = '(' + ' + '.join(chain) + ') * '
+        else:
+            chain = ''
+        return chain + super().code_impl()
 
 
 class EffectNode(TransformNode):

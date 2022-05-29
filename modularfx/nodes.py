@@ -131,3 +131,33 @@ class Polyphonic(SinkNode):
             print_exc()
         else:
             snd.play()
+
+
+@register_node
+class Inspector(SinkNode):
+
+    def __init__(self, scene):
+        super().__init__(scene)
+
+    def print_ast(self, code):
+        import ast
+        print(ast.unparse(ast.parse(code)))
+
+    def print_black(self, code):
+        import black
+        print(black.format_str(code, mode=black.mode.Mode()))
+
+    @UI.button('Inspect')
+    def onInspect(self):
+        node = self.getInput(1)
+        if node is not None:
+            code = node.code()
+            try:
+                self.print_black(code)
+            except Exception as e:
+                print_exc()
+                try:
+                    self.print_ast(code)
+                except Exception as e:
+                    print_exc()
+                    print(code)
