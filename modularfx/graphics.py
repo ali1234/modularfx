@@ -77,7 +77,7 @@ class BaseContent(QDMNodeContentWidget):
             self.addLabelRow(None, 'Output')
         if isinstance(self.node, TriggerNode):
             self.addLabelRow(None, 'Trigger')
-            for o in self.node.outputs:
+            for o in self.node.output_names:
                 self.addLabelRow(None, o)
 
     def addLabelRow(self, inlabel=None, outlabel=None):

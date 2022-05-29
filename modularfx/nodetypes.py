@@ -17,9 +17,10 @@ class UI(type):
                 cls.buttons[v.label] = k
 
     @classmethod
-    def button(cls, label):
+    def button(cls, label, socket=True):
         def _button(f):
             f.label = label
+            f.socket = socket
             return f
         return _button
 
@@ -30,7 +31,12 @@ class BaseNode(ParameterBase, Node, metaclass=UI):
     buttons = {}
 
     def __init__(self, scene, inputs, outputs):
-        super().__init__(scene, self.__class__.__name__, [5] * len(self.buttons) + [2] * len(self.parameters) + inputs, outputs)
+        n_buttons = len(list(filter(lambda b: getattr(self, b).socket, self.buttons.values())))
+        super().__init__(scene, self.__class__.__name__, [5] * n_buttons + [2] * len(self.parameters) + inputs, outputs)
+        # triggers are multi
+        for socket in self.inputs + self.outputs:
+            if socket.socket_type == 5:
+                socket.is_multi_edges = True
         self.markDirty()
 
     def initSettings(self):
@@ -180,8 +186,8 @@ class TriggerNode(BaseNode):
     def __init__(self, scene, outputs=None):
         if outputs is None:
             outputs = []
-        self.outputs = outputs
-        super().__init__(scene, [], [5] + ([2]*len(self.outputs)))
+        self.output_names = outputs
+        super().__init__(scene, [], [5] + ([2]*len(self.output_names)))
 
     def trigger(self):
         for e in self.outputs[0].edges:

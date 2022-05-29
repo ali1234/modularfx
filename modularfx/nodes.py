@@ -44,7 +44,7 @@ for name, cls in introspect(gensound.transforms, gensound.transforms.Transform, 
 
 @register_node
 class Button(TriggerNode):
-    @UI.button('Trigger')
+    @UI.button('Trigger', socket=False)
     def onClick(self):
         self.trigger()
 
