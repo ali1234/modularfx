@@ -184,7 +184,7 @@ class ParameterStore(metaclass=ParameterStoreMeta):
                 params[k] = Parameter(v.default, v.annotation)
 
         return type(name, (node_type,), {
-            '_f': property(lambda self: lambda type, **kwargs: self.parameters.type.value(**kwargs)),
+            '_f': property(lambda self: lambda type, **kwargs: type(**kwargs)),
             'Parameters': type('Parameters', (getattr(node_type, 'Parameters', cls), ), params)
         })
 
