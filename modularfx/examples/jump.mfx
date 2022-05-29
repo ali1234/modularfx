@@ -6,8 +6,8 @@
         {
             "id": 140090911294656,
             "title": "Curve",
-            "pos_x": -329.0,
-            "pos_y": -240.0,
+            "pos_x": -440.0,
+            "pos_y": -233.0,
             "inputs": [
                 {
                     "id": 140090911295952,
@@ -59,8 +59,8 @@
         {
             "id": 139844744169600,
             "title": "Oscillator",
-            "pos_x": -44.0,
-            "pos_y": -162.0,
+            "pos_x": -186.0,
+            "pos_y": -176.0,
             "inputs": [
                 {
                     "id": 139844744170944,
@@ -114,8 +114,8 @@
         {
             "id": 139844743980608,
             "title": "ADSR",
-            "pos_x": 314.0,
-            "pos_y": -158.0,
+            "pos_x": 68.0,
+            "pos_y": -204.0,
             "inputs": [
                 {
                     "id": 139844494035456,
@@ -191,6 +191,32 @@
                 "sustain": 0.75,
                 "release": 2000
             }
+        },
+        {
+            "id": 140123711302240,
+            "title": "Inspector",
+            "pos_x": 305.0,
+            "pos_y": -30.0,
+            "inputs": [
+                {
+                    "id": 140123711302720,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140123711302768,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "type_name": "Inspector",
+            "parameters": {}
         }
     ],
     "edges": [
@@ -205,6 +231,12 @@
             "edge_type": 2,
             "start": 139844744039104,
             "end": 139844494035792
+        },
+        {
+            "id": 140123711203120,
+            "edge_type": 2,
+            "start": 139844494035888,
+            "end": 140123711302768
         }
     ]
 }
