@@ -15,7 +15,7 @@ setup(
             'modularfx=modularfx.main:main',
         ]
     },
-    install_requires=['gensound', 'pygame', 'nodeeditor', 'QtPy', 'PyQt5', 'click'],
+    install_requires=['gensound', 'pygame', 'nodeeditor', 'QtPy', 'PyQt5', 'click', 'pyqtconsole'],
     url='https://github.com/ali1234/modularfx',
     license='GPL',
     author='Alistair Buxton',

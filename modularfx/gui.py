@@ -10,6 +10,8 @@ from qtpy.QtCore import Qt, QSignalMapper
 from nodeeditor.node_editor_window import NodeEditorWindow
 from nodeeditor.utils import dumpException
 
+from pyqtconsole.console import PythonConsole
+
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
 from nodeeditor.node_edge_validators import (
@@ -53,6 +55,7 @@ class ModularFXWindow(NodeEditorWindow):
         self.exampleMapper.mapped[str].connect(self.fileLoad)
 
         self.createNodesDock()
+        self.createConsole()
 
         self.createActions()
         self.createMenus()
@@ -229,6 +232,9 @@ class ModularFXWindow(NodeEditorWindow):
 
         for i, window in enumerate(windows):
             child = window.widget()
+            self.consoleLocals['scenes'][window.windowTitle] = child.scene
+            if child is self.getCurrentNodeEditorWidget():
+                self.consoleLocals['current'] = child.scene
 
             text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
             if i < 9:
@@ -256,6 +262,15 @@ class ModularFXWindow(NodeEditorWindow):
             self.nodesDock.setWidget(self.nodesListWidget)
             self.nodesDock.setFloating(False)
             self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
+
+    def createConsole(self):
+        self.consoleLocals = {'scenes': {}, 'current': None}
+        self.console = PythonConsole(self, locals=self.consoleLocals)
+        self.consoleDock = QDockWidget('Console')
+        self.consoleDock.setWidget(self.console)
+        self.consoleDock.setFloating(False)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.consoleDock)
+        self.console.eval_queued()
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
