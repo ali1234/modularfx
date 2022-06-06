@@ -11,9 +11,11 @@ from nodeeditor.node_graphics_node import QDMGraphicsNode
 
 from modularfx.gui.nodelist import NODELIST_MIMETYPE
 from modularfx.node.registry import node_registry, get_node_by_id
-from modularfx.node.nodetypes import BaseNode
+from modularfx.node.node import Node
 from modularfx.gui.graphics import BaseGraphicsNode, BaseContent
 
+Node.GraphicsNode_class = BaseGraphicsNode
+Node.NodeContent_class = BaseContent
 
 DEBUG = False
 DEBUG_CONTEXT = False

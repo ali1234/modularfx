@@ -1,4 +1,5 @@
 import ast
+import inspect
 
 from qtpy.QtGui import QImage, QBrush, QFont
 from qtpy.QtCore import Qt, QRectF
@@ -8,8 +9,7 @@ from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_graphics_socket import SOCKET_COLORS
 
-from modularfx.node.nodetypes import *
-from modularfx.node.parameters import ChoiceParamAttr
+from modularfx.node.attributes import *
 
 
 class BaseGraphicsNode(QDMGraphicsNode):
@@ -54,32 +54,46 @@ class BaseContent(QDMNodeContentWidget):
         self.setLayout(self.layout)
         self.layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.fields = {}
-        self.inputs = []
-        self.outputs = []
-        for k, v in self.node.buttons.items():
-            button = QPushButton(k, self)
-            button.pressed.connect(getattr(self.node, v))
-            self.layout.addRow(button)
-            self.inputs.append(button)
-        for k, v in self.node.parameters.items():
-            if isinstance(v, ChoiceParamAttr):
-                self.addSelect(k, v)
-            else:
-                self.addField(k, v)
-        if isinstance(self.node, TransformNode):
-            self.addLabelRow('Apply', None)
-        if isinstance(self.node, SinkNode):
-            self.addLabelRow('Sink', None)
-        if isinstance(self.node, ChainableNode):
-            self.addLabelRow('Concat', 'Output')
-        if isinstance(self.node, GeneralNode):
-            self.addLabelRow(None, 'Output')
-        if isinstance(self.node, TriggerNode):
-            self.addLabelRow(None, 'Trigger')
-            for o in self.node.output_names:
-                self.addLabelRow(None, o)
+        left_tmp = []
+        right_tmp = []
+        for k, v in type(self.node).all_attrs():
+            if isinstance(v, Slot):
+                self.doLeftRight(left_tmp, right_tmp)
+                self.fields[k] = self.addButton(k, v)
+            elif isinstance(v, Parameter):
+                self.doLeftRight(left_tmp, right_tmp)
+                self.fields[k] = self.addField(v.label, v)
+            elif isinstance(v, Input):
+                if not v.hidden:
+                    left_tmp.append((k, v))
+            elif isinstance(v, (Signal, Output)):
+                if not v.hidden:
+                    right_tmp.append((k, v))
+        self.doLeftRight(left_tmp, right_tmp)
 
-    def addLabelRow(self, inlabel=None, outlabel=None):
+    def doLeftRight(self, l, r):
+        while(len(l) > len(r)):
+            k, v = l.pop(0)
+            self.fields[k] = self.addLabelRow(v.label, None)
+        while(len(r) > len(l)):
+            k, v = r.pop(0)
+            self.fields[k] = self.addLabelRow(None, v.label)
+        while(len(l)):
+            lk, lv = l.pop(0)
+            rk, rv = r.pop(0)
+            row = self.addLabelRow(lv.label, rv.label)
+            self.fields[lk] = row
+            self.fields[rk] = row
+
+    def addButton(self, k, v):
+        button = QPushButton(v.label, self)
+        button.setToolTip(v.doc)
+        self.layout.addRow(button)
+        self.fields[k] = button
+        button.pressed.connect(getattr(self.node, k).eval)
+        return button
+
+    def addLabelRow(self, inlabel, outlabel):
         # add an invisible line edit to make this row the right height
         spacer = QLineEdit(self)
         sp = spacer.sizePolicy()
@@ -92,13 +106,12 @@ class BaseContent(QDMNodeContentWidget):
         l.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         l.addWidget(spacer)
         if outlabel is not None:
-            o = QLabel(outlabel, self)
+            o = QLabel(outlabel.title(), self)
             o.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             l.addWidget(o)
-            self.outputs.append(l)
+            self.fields[outlabel] = o
         self.layout.addRow(inlabel, l)
-        if inlabel is not None:
-            self.inputs.append(l)
+        return l
 
     def addField(self, label, attr):
         field = QLineEdit(self)
@@ -106,14 +119,12 @@ class BaseContent(QDMNodeContentWidget):
         sp = field.sizePolicy()
         sp.setRetainSizeWhenHidden(True)
         field.setSizePolicy(sp)
-        if attr is not None:
+        if isinstance(attr, Parameter):
             if attr.default is not inspect._empty:
                 field.setPlaceholderText(repr(attr.default))
             field.textChanged.connect(lambda: self.onFieldChanged(field, attr))
         self.layout.addRow(label.title(), field)
-        self.fields[label] = field
-        if attr is None or attr.is_socket:
-            self.inputs.append(field)
+        return field
 
     def onFieldChanged(self, field, attr):
         try:
@@ -121,7 +132,7 @@ class BaseContent(QDMNodeContentWidget):
             if t == "":
                 attr.clear()
             else:
-                attr.set(ast.literal_eval(field.text()))
+                attr = ast.literal_eval(field.text())
         except (ValueError, SyntaxError) as e:
             field.setStyleSheet("background-color:#ffaaaa;")
         else:
@@ -150,6 +161,3 @@ class BaseContent(QDMNodeContentWidget):
 
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
-
-BaseNode.GraphicsNode_class = BaseGraphicsNode
-BaseNode.NodeContent_class = BaseContent
