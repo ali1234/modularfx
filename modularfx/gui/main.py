@@ -4,7 +4,7 @@ from traceback import print_exc
 from qtpy.QtWidgets import QApplication
 
 from qtpy.QtGui import QIcon, QKeySequence
-from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog, QActionGroup
+from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
 
 from nodeeditor.node_editor_window import NodeEditorWindow
@@ -21,9 +21,9 @@ from nodeeditor.node_edge_validators import (
 )
 
 import modularfx
-from modularfx.editor import Editor
-from modularfx.nodelist import NodeList
-from modularfx.registry import node_registry, node_groups
+from modularfx.gui.editor import Editor
+from modularfx.gui.nodelist import NodeList
+from modularfx.registry import node_groups
 
 
 Edge.registerEdgeValidator(edge_validator_debug)
@@ -37,7 +37,7 @@ class ModularFXWindow(NodeEditorWindow):
         self.name_company = 'Ali1234'
         self.name_product = 'ModularFX'
 
-        self.empty_icon = QIcon(".")
+        self.empty_icon = QIcon("..")
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)

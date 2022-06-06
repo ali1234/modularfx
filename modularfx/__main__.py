@@ -9,7 +9,7 @@ def main(filename, output):
         from modularfx.cli import cli
         cli(filename, output)
     else:
-        from modularfx.gui import gui
+        from modularfx.gui.main import gui
         gui(filename)
 
 

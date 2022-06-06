@@ -28,7 +28,7 @@ class BaseGraphicsNode(QDMGraphicsNode):
 
     def initAssets(self):
         super().initAssets()
-        self.icons = QImage("data/icons/status_icons.png")
+        self.icons = QImage("../data/icons/status_icons.png")
         self._brush_title = QBrush(SOCKET_COLORS[self.node.node_colour])
         self._brush_background = QBrush(SOCKET_COLORS[self.node.node_colour].lighter(190))
         self._title_font.setWeight(QFont.Weight.Black)

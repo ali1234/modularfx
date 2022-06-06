@@ -3,7 +3,10 @@ from setuptools import setup
 setup(
     name='modularfx',
     version='0.1',
-    packages=['modularfx'],
+    packages=[
+        'modularfx',
+        'modularfx.gui',
+    ],
     package_data={
         'modularfx': [
             'data/icons/*',
