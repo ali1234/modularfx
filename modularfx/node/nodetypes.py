@@ -6,7 +6,7 @@ from traceback import print_exc
 from nodeeditor.node_node import Node
 from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_BOTTOM
 
-from modularfx.parameters import ParameterBase
+from modularfx.node.parameters import ParameterBase
 
 
 class UI(type):

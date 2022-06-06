@@ -6,6 +6,7 @@ setup(
     packages=[
         'modularfx',
         'modularfx.gui',
+        'modularfx.node',
     ],
     package_data={
         'modularfx': [

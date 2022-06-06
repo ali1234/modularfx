@@ -1,11 +1,10 @@
-import operator, math
+import math
 
-from modularfx.parameters import ParameterStore, Parameter
-from modularfx.nodetypes import *
-from modularfx.registry import register_node
+from modularfx.node.parameters import ParameterStore, Parameter
+from modularfx.node.nodetypes import *
+from modularfx.node.registry import register_node
 
 import gensound.curve
-import gensound.signals
 import gensound.filters
 import gensound.effects
 

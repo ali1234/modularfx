@@ -10,8 +10,8 @@ from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 
 from modularfx.gui.nodelist import NODELIST_MIMETYPE
-from modularfx.registry import node_registry, get_node_by_id
-from modularfx.nodetypes import BaseNode
+from modularfx.node.registry import node_registry, get_node_by_id
+from modularfx.node.nodetypes import BaseNode
 from modularfx.gui.graphics import BaseGraphicsNode, BaseContent
 
 

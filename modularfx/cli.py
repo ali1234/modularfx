@@ -3,7 +3,7 @@ import numpy as np
 
 from nodeeditor.node_scene import Scene
 
-from modularfx.registry import get_node_by_id
+from modularfx.node.registry import get_node_by_id
 
 
 class Content:

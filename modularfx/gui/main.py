@@ -23,7 +23,7 @@ from nodeeditor.node_edge_validators import (
 import modularfx
 from modularfx.gui.editor import Editor
 from modularfx.gui.nodelist import NodeList
-from modularfx.registry import node_groups
+from modularfx.node.registry import node_groups
 
 
 Edge.registerEdgeValidator(edge_validator_debug)

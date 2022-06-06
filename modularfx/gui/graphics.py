@@ -1,16 +1,15 @@
 import ast
-import inspect
 
-from qtpy.QtGui import QImage, QBrush, QFont, QPalette, QColor
+from qtpy.QtGui import QImage, QBrush, QFont
 from qtpy.QtCore import Qt, QRectF
-from qtpy.QtWidgets import QWidget, QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
+from qtpy.QtWidgets import QPushButton, QFormLayout, QLineEdit, QComboBox, QLabel, QLayout, QHBoxLayout
 
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_graphics_socket import SOCKET_COLORS
 
-from modularfx.nodetypes import *
-from modularfx.parameters import ChoiceParamAttr
+from modularfx.node.nodetypes import *
+from modularfx.node.parameters import ChoiceParamAttr
 
 
 class BaseGraphicsNode(QDMGraphicsNode):

@@ -1,6 +1,6 @@
 import unittest
 
-from modularfx.parameters import ParameterBase, ParameterStore, Parameter
+from modularfx.node.parameters import ParameterBase, ParameterStore, Parameter
 
 
 class ParametersObject(ParameterBase):

@@ -1,7 +1,7 @@
 import inspect
 from collections import defaultdict
 
-from modularfx.parameters import ParameterStore
+from modularfx.node.parameters import ParameterStore
 
 
 node_registry = {}
@@ -49,4 +49,4 @@ def get_node_by_id(type_name):
     return node_registry[type_name]
 
 
-import modularfx.nodes
+import modularfx.node.nodes
