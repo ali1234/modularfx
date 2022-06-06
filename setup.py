@@ -6,8 +6,8 @@ setup(
     packages=['modularfx'],
     package_data={
         'modularfx': [
-            'icons/*',
-            'examples/*',
+            'data/icons/*',
+            'data/examples/*',
         ],
     },
     entry_points={

@@ -11,3 +11,7 @@ def main(filename, output):
     else:
         from modularfx.gui import gui
         gui(filename)
+
+
+if __name__ == '__main__':
+    main()

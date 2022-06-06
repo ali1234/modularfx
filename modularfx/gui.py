@@ -20,6 +20,7 @@ from nodeeditor.node_edge_validators import (
     edge_cannot_connect_input_and_output_of_same_node
 )
 
+import modularfx
 from modularfx.editor import Editor
 from modularfx.nodelist import NodeList
 from modularfx.registry import node_registry, node_groups
@@ -164,7 +165,7 @@ class ModularFXWindow(NodeEditorWindow):
 
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.examplesMenu = self.helpMenu.addMenu("&Examples")
-        expath = pathlib.Path(__file__).parent / 'examples'
+        expath = pathlib.Path(modularfx.__file__).parent / 'data' / 'examples'
         for n, f in enumerate(expath.glob('*.mfx')):
             act = self.examplesMenu.addAction(f.stem.title())
             act.triggered.connect(self.exampleMapper.map)
