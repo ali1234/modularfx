@@ -1,5 +1,6 @@
 import ast
 import inspect
+import pathlib
 
 from qtpy.QtGui import QImage, QBrush, QFont
 from qtpy.QtCore import Qt, QRectF
@@ -9,6 +10,7 @@ from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_graphics_socket import SOCKET_COLORS
 
+import modularfx
 from modularfx.node.attributes import *
 
 
@@ -27,7 +29,7 @@ class BaseGraphicsNode(QDMGraphicsNode):
 
     def initAssets(self):
         super().initAssets()
-        self.icons = QImage("../data/icons/status_icons.png")
+        self.icons = QImage(str(pathlib.Path(modularfx.__file__).parent / 'data' / 'icons' / 'status_icons.png'))
         self._brush_title = QBrush(SOCKET_COLORS[self.node.node_colour])
         self._brush_background = QBrush(SOCKET_COLORS[self.node.node_colour].lighter(190))
         self._title_font.setWeight(QFont.Weight.Black)
@@ -62,7 +64,7 @@ class BaseContent(QDMNodeContentWidget):
                 self.fields[k] = self.addButton(k, v)
             elif isinstance(v, Parameter):
                 self.doLeftRight(left_tmp, right_tmp)
-                self.fields[k] = self.addField(v.label, v)
+                self.fields[k] = self.addField(k, v)
             elif isinstance(v, Input):
                 if not v.hidden:
                     left_tmp.append((k, v))
@@ -85,12 +87,12 @@ class BaseContent(QDMNodeContentWidget):
             self.fields[lk] = row
             self.fields[rk] = row
 
-    def addButton(self, k, v):
-        button = QPushButton(v.label, self)
-        button.setToolTip(v.doc)
+    def addButton(self, name, attr):
+        button = QPushButton(attr.label, self)
+        button.setToolTip(attr.doc)
         self.layout.addRow(button)
-        self.fields[k] = button
-        button.pressed.connect(getattr(self.node, k).eval)
+        self.fields[name] = button
+        button.pressed.connect(getattr(self.node, name).eval)
         return button
 
     def addLabelRow(self, inlabel, outlabel):
@@ -113,7 +115,7 @@ class BaseContent(QDMNodeContentWidget):
         self.layout.addRow(inlabel, l)
         return l
 
-    def addField(self, label, attr):
+    def addField(self, name, attr):
         field = QLineEdit(self)
         field.setAlignment(Qt.AlignRight)
         sp = field.sizePolicy()
@@ -122,21 +124,24 @@ class BaseContent(QDMNodeContentWidget):
         if isinstance(attr, Parameter):
             if attr.default is not inspect._empty:
                 field.setPlaceholderText(repr(attr.default))
-            field.textChanged.connect(lambda: self.onFieldChanged(field, attr))
-        self.layout.addRow(label.title(), field)
+            field.editingFinished.connect(lambda: self.onFieldChanged(field, name, attr))
+        self.layout.addRow(attr.label.title(), field)
         return field
 
-    def onFieldChanged(self, field, attr):
+    def onFieldChanged(self, field, name, attr):
+        bound = getattr(self.node, name)
         try:
             t = field.text()
             if t == "":
-                attr.clear()
+                del bound.value
             else:
-                attr = ast.literal_eval(field.text())
+                bound.value = ast.literal_eval(field.text())
         except (ValueError, SyntaxError) as e:
             field.setStyleSheet("background-color:#ffaaaa;")
+            self.node.markInvalid()
         else:
             field.setStyleSheet("")
+            self.node.markInvalid(False)
         finally:
             self.node.markDirty()
             self.node.markDescendantsDirty()
@@ -155,7 +160,7 @@ class BaseContent(QDMNodeContentWidget):
             self.inputs.append(select)
 
     def onSelectChanged(self, select, attr):
-        attr.set(select.currentData())
+
         self.node.markDirty()
         self.node.markDescendantsDirty()
 

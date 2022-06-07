@@ -18,6 +18,7 @@ class Node(_Node, metaclass=Attributes):
     def debug(self):
         """Dump node description and code() for the last output."""
         print(self.describe())
+        print(self._parameters)
         if len(self.outputs) > 0:
             print(getattr(self, type(self).name_for_index(-1, False)).code())
 
