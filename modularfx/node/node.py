@@ -18,7 +18,8 @@ class Node(_Node, metaclass=Attributes):
     def debug(self):
         """Dump node description and code() for the last output."""
         print(self.describe())
-        print(getattr(self, type(self).name_for_index(-1, False)).code())
+        if len(self.outputs) > 0:
+            print(getattr(self, type(self).name_for_index(-1, False)).code())
 
     def __init__(self, scene=None):
         inputs = [v.socket_type for k, v in type(self).input_sockets()]
@@ -30,16 +31,18 @@ class Node(_Node, metaclass=Attributes):
     @classmethod
     def describe(cls):
         result = [repr(cls)]
-        result.append('  Inputs:')
         inputs = cls.input_attrs()
         outputs = cls.output_attrs()
         length = 4 + max((len(k) for k, v in inputs + outputs), default=0)
         fmt = f'{{:>{length}s}} = {{}}'
-        for k, v in inputs:
-            result.append(fmt.format(k, v))
-        result.append('  Outputs:')
-        for k, v in outputs:
-            result.append(fmt.format(k, v))
+        if inputs:
+            result.append('  Inputs:')
+            for k, v in inputs:
+                result.append(fmt.format(k, v))
+        if outputs:
+            result.append('  Outputs:')
+            for k, v in outputs:
+                result.append(fmt.format(k, v))
         return '\n'.join(result)
 
     def initSettings(self):
