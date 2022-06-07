@@ -16,9 +16,10 @@ class BoundNodeAttribute(BoundAttribute):
 
     @property
     def connected(self):
-        for e in self.socket.edges:
-            other = e.getOtherSocket(self.socket)
-            yield other.node, other.index
+        if hasattr(self, 'socket'):
+            for e in self.socket.edges:
+                other = e.getOtherSocket(self.socket)
+                yield other.node, other.index
 
 
 class NodeAttribute(Attribute):
