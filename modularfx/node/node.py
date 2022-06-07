@@ -117,7 +117,7 @@ class Node(_Node, metaclass=Attributes):
             for x in ['group', 'node_colour']:
                 if x in kwargs:
                     namespace[x] = kwargs.pop(x)
-            namespace[choice] = Parameter(default=fs[0][1], socket_type=None)
+            namespace[choice] = ChoiceParameter(fs, default=fs[0][0], socket_type=None)
             args = []
             for k, v in inspect.signature(fs[0][1]).parameters.items():
                 args.append(k)

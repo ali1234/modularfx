@@ -62,6 +62,9 @@ class BaseContent(QDMNodeContentWidget):
             if isinstance(v, Slot):
                 self.doLeftRight(left_tmp, right_tmp)
                 self.fields[k] = self.addButton(k, v)
+            elif isinstance(v, ChoiceParameter):
+                self.doLeftRight(left_tmp, right_tmp)
+                self.fields[k] = self.addSelect(k, v)
             elif isinstance(v, Parameter):
                 self.doLeftRight(left_tmp, right_tmp)
                 self.fields[k] = self.addField(k, v)
@@ -124,12 +127,12 @@ class BaseContent(QDMNodeContentWidget):
         if isinstance(attr, Parameter):
             if attr.default is not inspect._empty:
                 field.setPlaceholderText(repr(attr.default))
-            field.editingFinished.connect(lambda: self.onFieldChanged(field, name, attr))
-        self.layout.addRow(attr.label.title(), field)
+            bound = getattr(self.node, name)
+            field.editingFinished.connect(lambda: self.onFieldChanged(field, bound))
+        self.layout.addRow(attr.label, field)
         return field
 
-    def onFieldChanged(self, field, name, attr):
-        bound = getattr(self.node, name)
+    def onFieldChanged(self, field, bound):
         try:
             t = field.text()
             if t == "":
@@ -146,21 +149,20 @@ class BaseContent(QDMNodeContentWidget):
             self.node.markDirty()
             self.node.markDescendantsDirty()
 
-    def addSelect(self, label, attr):
+    def addSelect(self, name, attr):
         select = QComboBox(self)
         sp = select.sizePolicy()
         sp.setRetainSizeWhenHidden(True)
         select.setSizePolicy(sp)
-        for k, v in attr.choices.items():
-            select.addItem(k.title(), v)
-        select.currentIndexChanged.connect(lambda: self.onSelectChanged(select, attr))
-        self.layout.addRow(label.title(), select)
-        self.fields[label] = select
-        if attr.is_socket:
-            self.inputs.append(select)
+        for k, v in attr._forward.items():
+            select.addItem(k, v)
+        bound = getattr(self.node, name)
+        select.currentIndexChanged.connect(lambda: self.onSelectChanged(select, bound))
+        self.layout.addRow(attr.label, select)
+        return select
 
-    def onSelectChanged(self, select, attr):
-
+    def onSelectChanged(self, select, bound):
+        bound.value = select.currentData()
         self.node.markDirty()
         self.node.markDescendantsDirty()
 
