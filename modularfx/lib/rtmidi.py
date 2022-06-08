@@ -20,8 +20,7 @@ class MIDI(Node):
 
     def onMidi(self, event, data):
         message, time = event
-        if message[0] == 144:
-            print(message)
+        if message[0] == 144 and message[2] > 0:
             self._note = message[1]
             self.markDirty()
             self.markDescendantsDirty()
