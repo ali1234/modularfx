@@ -118,16 +118,20 @@ class Node(_Node, metaclass=Attributes):
                 if x in kwargs:
                     namespace[x] = kwargs.pop(x)
             namespace[choice] = ChoiceParameter(fs, default=fs[0][0], socket_type=None)
-            args = []
+            fargs = []
+            fkwargs = []
             for k, v in inspect.signature(fs[0][1]).parameters.items():
-                args.append(k)
+                if v.kind is v.POSITIONAL_ONLY:
+                    fargs.append(k)
+                else:
+                    fkwargs.append(k)
                 namespace[k] = Parameter(default=v.default, annotation=v.annotation)
             namespace[output] = Output(**kwargs)
             namespace[output].evaluator(
-                lambda self: getattr(self, choice).eval()(**{arg: getattr(self, arg).eval() for arg in args})
+                lambda self: getattr(self, choice).eval()(*[getattr(self, arg).eval() for arg in fargs], **{arg: getattr(self, arg).eval() for arg in fkwargs})
             )
             namespace[output].codegen(
-                lambda self: f'{getattr(self, choice).eval().__module__}.{getattr(self, choice).eval().__name__}({", ".join(f"{arg}={getattr(self, arg).code()}" for arg in args)})'
+                lambda self: f'{getattr(self, choice).eval().__module__}.{getattr(self, choice).eval().__name__}({", ".join([f"{getattr(self, arg).code()}" for arg in fargs] + [f"{arg}={getattr(self, arg).code()}" for arg in fkwargs])})'
             )
             return type(nodename, (cls,), namespace)
 
