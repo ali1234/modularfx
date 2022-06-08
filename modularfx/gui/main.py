@@ -46,6 +46,7 @@ class ModularFXWindow(NodeEditorWindow):
         self.mdiArea.setDocumentMode(True)
         self.mdiArea.setTabsClosable(True)
         self.mdiArea.setTabsMovable(True)
+        self.mdiArea.subWindowActivated.connect(self.subWindowActivated)
         self.setCentralWidget(self.mdiArea)
 
         self.mdiArea.subWindowActivated.connect(self.updateMenus)
@@ -233,10 +234,6 @@ class ModularFXWindow(NodeEditorWindow):
 
         for i, window in enumerate(windows):
             child = window.widget()
-            self.consoleLocals['scenes'][window.windowTitle] = child.scene
-            if child is self.getCurrentNodeEditorWidget():
-                self.consoleLocals['current'] = child.scene
-
             text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
             if i < 9:
                 text = '&' + text
@@ -304,6 +301,10 @@ class ModularFXWindow(NodeEditorWindow):
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
+
+    def subWindowActivated(self, window):
+        self.consoleLocals['current_editor'] = window.widget()
+        self.consoleLocals['current_scene'] = window.widget().scene
 
 
 def gui(filename):
