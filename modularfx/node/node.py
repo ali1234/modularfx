@@ -72,6 +72,21 @@ class Node(_Node, metaclass=Attributes):
         if isinstance(getattr(type(self), name), Parameter):
             self.content.hideField(name, socket.hasAnyEdge())
 
+    def serialize(self):
+        data = super().serialize()
+        data['type_name'] = self.__class__.__name__
+        data['parameters'] = self._parameters
+        return data
+
+    def deserialize(self, data: dict, hashmap: dict={}, restore_id: bool=True, *args, **kwargs) -> bool:
+        if super().deserialize(data, hashmap, restore_id):
+            for k, v in data['parameters'].items():
+                attr = getattr(self, k)
+                attr.value = attr.deserialize(v)
+            return True
+        else:
+            return False
+
     def socket_for_name(self, name):
         index, input = type(self).index_for_name(name)
         if input:

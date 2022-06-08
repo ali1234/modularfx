@@ -17,6 +17,8 @@ class BoundParameter(BoundNodeAttribute):
     @value.setter
     def value(self, value):
         self._instance._parameters[self._attr._name] = value
+        if hasattr(self._instance, 'content'):
+            self._instance.content.setField(self._attr._name, value)
 
     @value.deleter
     def value(self):
@@ -67,6 +69,9 @@ class Parameter(NodeAttribute):
     def annotation(self):
         return self._annotation
 
+    def deserialize(self, value):
+        return value
+
 
 class BoundChoiceParameter(BoundParameter):
     @property
@@ -75,7 +80,13 @@ class BoundChoiceParameter(BoundParameter):
 
     @value.setter
     def value(self, value):
-        BoundParameter.value.__set__(self, self._reverse[value])
+        try:
+            BoundParameter.value.__set__(self, self._reverse[value])
+        except KeyError:
+            if value in self._forward:
+                BoundParameter.value.__set__(self, value)
+            else:
+                raise
 
     @value.deleter
     def value(self):
@@ -89,3 +100,5 @@ class ChoiceParameter(Parameter):
         self._forward = {k: v for k, v in choices}
         self._reverse = {v: k for k, v in choices}
 
+    def deserialize(self, value):
+        return self._forward[value]

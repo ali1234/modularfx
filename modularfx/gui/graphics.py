@@ -155,6 +155,7 @@ class BaseContent(QDMNodeContentWidget):
         sp.setRetainSizeWhenHidden(True)
         select.setSizePolicy(sp)
         for k, v in attr._forward.items():
+            print(k, v)
             select.addItem(k, v)
         bound = getattr(self.node, name)
         select.currentIndexChanged.connect(lambda: self.onSelectChanged(select, bound))
@@ -162,9 +163,17 @@ class BaseContent(QDMNodeContentWidget):
         return select
 
     def onSelectChanged(self, select, bound):
+        print(select.currentData())
         bound.value = select.currentData()
         self.node.markDirty()
         self.node.markDescendantsDirty()
+
+    def setField(self, name, value):
+        field = self.fields[name]
+        if isinstance(field, QComboBox):
+            field.setCurrentIndex(field.findText(value))
+        elif isinstance(field, QLineEdit):
+            field.setText(repr(value))
 
     def hideField(self, field, hide):
         self.fields[field].setVisible(not hide)
