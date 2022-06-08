@@ -22,7 +22,7 @@ class MIDI(Node):
         message, time = event
         if message[0] == 144:
             print(message)
-            self.note = message[1]
+            self._note = message[1]
             self.markDirty()
             self.markDescendantsDirty()
             self.trigger.eval()
@@ -35,8 +35,16 @@ class MIDI(Node):
     def note(self):
         return self._note
 
+    @note.codegen
+    def note(self):
+        return repr(self._note)
+
     frequency = Output(socket_type=2)
 
     @frequency.evaluator
     def frequency(self):
         return 440 * (2**((self._note-69)/12))
+
+    @frequency.codegen
+    def frequency(self):
+        return repr(440 * (2**((self._note-69)/12)))
