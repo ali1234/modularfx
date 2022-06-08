@@ -8,8 +8,12 @@ class BoundInput(BoundNodeAttribute):
     def eval(self):
         result = [node.eval(index=index) for node, index in self.connected]
         if self._is_multi:
+            print(result)
             if self._reduce:
-                return reduce(self._reduce, result)
+                if len(result) > 0:
+                    return reduce(self._reduce, result)
+                else:
+                    return None
             else:
                 return result
         elif len(result) == 1:

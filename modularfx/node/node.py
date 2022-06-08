@@ -29,6 +29,10 @@ class Node(_Node, metaclass=Attributes):
         self._parameters = {}
         if scene is not None:
             super().__init__(scene, type(self).__name__, inputs, outputs)
+        for n, (k, v) in enumerate(type(self).input_sockets()):
+            self.inputs[n].is_multi_edges = v.is_multi
+        for n, (k, v) in enumerate(type(self).output_sockets()):
+            self.outputs[n].is_multi_edges = v.is_multi
 
     @classmethod
     def describe(cls):

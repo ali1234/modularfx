@@ -3,6 +3,8 @@ import gensound.signals
 import gensound.filters
 import gensound.effects
 
+import operator
+
 from modularfx.node.node import Node
 from modularfx.node.attributes import *
 from modularfx.node.registry import register_node
@@ -11,7 +13,7 @@ from modularfx.node.registry import register_node
 class CurveNode(Node):
     group = 'Curves'
     node_colour = 1
-    concat = Input(socket_type=1)
+    concat = Input(socket_type=1, is_multi=True, reduce=operator.add)
     result = Output(hidden=True)
     output = Output(socket_type=1)
 
@@ -38,7 +40,7 @@ class SignalNode(Node):
     group = 'Signals'
     node_colour = 0
     play = Slot()
-    concat = Input(socket_type=0)
+    concat = Input(socket_type=0, is_multi=True, reduce=operator.add)
     result = Output(hidden=True)
     output = Output(socket_type=0)
 
@@ -70,8 +72,8 @@ class TransformNode(Node):
     group = 'Transforms'
     node_colour = 3
     play = Slot()
-    apply = Input(socket_type=0)
-    concat = Input(socket_type=0)
+    apply = Input(socket_type=0, is_multi=True, reduce=operator.add)
+    concat = Input(socket_type=0, is_multi=True, reduce=operator.add)
     output = Output(socket_type=0)
 
     @play.evaluator

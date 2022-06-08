@@ -45,7 +45,7 @@
                 {
                     "id": 139860724329200,
                     "index": 0,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 5
                 },
@@ -73,7 +73,7 @@
                 {
                     "id": 139860724329392,
                     "index": 4,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 0
                 }
@@ -123,7 +123,7 @@
                 {
                     "id": 139860724368384,
                     "index": 3,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 1
                 }
@@ -190,7 +190,7 @@
                 {
                     "id": 139860717972736,
                     "index": 0,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 5
                 },
@@ -223,7 +223,7 @@
                 {
                     "id": 140070361575488,
                     "index": 0,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 5
                 },
@@ -265,14 +265,14 @@
                 {
                     "id": 140070361575776,
                     "index": 6,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 0
                 },
                 {
                     "id": 140070361575824,
                     "index": 7,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 0
                 }
