@@ -303,9 +303,12 @@ class ModularFXWindow(NodeEditorWindow):
             self.mdiArea.setActiveSubWindow(window)
 
     def subWindowActivated(self, window):
-        self.consoleLocals['current_editor'] = window.widget()
-        self.consoleLocals['current_scene'] = window.widget().scene
-
+        if window is not None:
+            self.consoleLocals['current_editor'] = window.widget()
+            self.consoleLocals['current_scene'] = window.widget().scene
+        else:
+            self.consoleLocals['current_editor'] = None
+            self.consoleLocals['current_scene'] = None
 
 def gui(filename):
     app = QApplication(sys.argv)
