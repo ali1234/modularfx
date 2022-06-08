@@ -1,4 +1,5 @@
 import inspect
+from collections import OrderedDict
 
 from nodeeditor.node_node import Node as _Node
 from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_BOTTOM
@@ -104,22 +105,31 @@ class Node(_Node, metaclass=Attributes):
         return getattr(self, self.output_for_index(index)).code()
 
     @classmethod
+    def _introspect_helper(cls, f, kwargs):
+        namespace = OrderedDict()
+        for x in ['group', 'node_colour']:
+            if x in kwargs:
+                namespace[x] = kwargs.pop(x)
+        fargs = []
+        fkwargs = []
+        for k, v in inspect.signature(f).parameters.items():
+            if v.kind is v.POSITIONAL_ONLY:
+                fargs.append(k)
+            else:
+                fkwargs.append(k)
+            namespace[k] = Parameter(default=v.default, annotation=v.annotation)
+        return namespace, fargs, fkwargs
+
+    @classmethod
     def introspect(cls, nodename=None, output='result', **kwargs):
         def _introspect(f):
-            namespace = {}
-            for x in ['group', 'node_colour']:
-                if x in kwargs:
-                    namespace[x] = kwargs.pop(x)
-            args = []
-            for k, v in inspect.signature(f).parameters.items():
-                args.append(k)
-                namespace[k] = Parameter(default=v.default, annotation=v.annotation)
+            namespace, fargs, fkwargs = cls._introspect_helper(f, kwargs)
             namespace[output] = Output(**kwargs)
             namespace[output].evaluator(
-                lambda self: f(**{arg: getattr(self, arg).eval() for arg in args})
+                lambda self: f(*[getattr(self, arg).eval() for arg in fargs], **{arg: getattr(self, arg).eval() for arg in fkwargs})
             )
             namespace[output].codegen(
-                lambda self: f'{f.__module__}.{f.__name__}({", ".join(f"{arg}={getattr(self, arg).code()}" for arg in args)})'
+                lambda self: f'{f.__module__}.{f.__name__}({", ".join([f"{getattr(self, arg).code()}" for arg in fargs] + [f"{arg}={getattr(self, arg).code()}" for arg in fkwargs])})'
             )
             return type(nodename or f.__name__, (cls,), namespace)
 
@@ -128,19 +138,9 @@ class Node(_Node, metaclass=Attributes):
     @classmethod
     def introspect_many(cls, nodename, choice='type', output='result', **kwargs):
         def _introspect(fs):
-            namespace = {}
-            for x in ['group', 'node_colour']:
-                if x in kwargs:
-                    namespace[x] = kwargs.pop(x)
+            namespace, fargs, fkwargs = cls._introspect_helper(fs[0][1], kwargs)
             namespace[choice] = ChoiceParameter(fs, default=fs[0][0], socket_type=None)
-            fargs = []
-            fkwargs = []
-            for k, v in inspect.signature(fs[0][1]).parameters.items():
-                if v.kind is v.POSITIONAL_ONLY:
-                    fargs.append(k)
-                else:
-                    fkwargs.append(k)
-                namespace[k] = Parameter(default=v.default, annotation=v.annotation)
+            namespace.move_to_end(choice, False)
             namespace[output] = Output(**kwargs)
             namespace[output].evaluator(
                 lambda self: getattr(self, choice).eval()(*[getattr(self, arg).eval() for arg in fargs], **{arg: getattr(self, arg).eval() for arg in fkwargs})
