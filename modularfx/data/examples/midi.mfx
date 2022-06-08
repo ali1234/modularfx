@@ -6,8 +6,8 @@
         {
             "id": 139860724224208,
             "title": "MIDI",
-            "pos_x": -784.0,
-            "pos_y": -237.0,
+            "pos_x": -779.0,
+            "pos_y": -308.0,
             "inputs": [],
             "outputs": [
                 {
@@ -96,8 +96,8 @@
         {
             "id": 139860724329536,
             "title": "Curve",
-            "pos_x": -306.0,
-            "pos_y": -118.0,
+            "pos_x": -293.0,
+            "pos_y": -165.0,
             "inputs": [
                 {
                     "id": 139860724368240,
@@ -140,14 +140,15 @@
             "content": {},
             "type_name": "Curve",
             "parameters": {
-                "duration": 200.0
+                "duration": 200.0,
+                "type": "Logistic"
             }
         },
         {
             "id": 139860724369776,
             "title": "Math",
-            "pos_x": -633.0,
-            "pos_y": 6.0,
+            "pos_x": -587.0,
+            "pos_y": -31.0,
             "inputs": [
                 {
                     "id": 139860724370784,
@@ -176,82 +177,8 @@
             "content": {},
             "type_name": "Math",
             "parameters": {
-                "b": 1.05,
-                "operation": "Multiply"
-            }
-        },
-        {
-            "id": 139860717888320,
-            "title": "ADSR",
-            "pos_x": 340.0,
-            "pos_y": -173.0,
-            "inputs": [
-                {
-                    "id": 139860717970480,
-                    "index": 0,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 139860717970528,
-                    "index": 1,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 139860717970576,
-                    "index": 2,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 139860717970624,
-                    "index": 3,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 139860717970672,
-                    "index": 4,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 2
-                },
-                {
-                    "id": 139860717970720,
-                    "index": 5,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 0
-                },
-                {
-                    "id": 139860717970768,
-                    "index": 6,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 0
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 139860717970816,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 6,
-                    "socket_type": 0
-                }
-            ],
-            "content": {},
-            "type_name": "ADSR",
-            "parameters": {
-                "attack": 1000,
-                "decay": 1000,
-                "sustain": 0.5,
-                "release": 1000
+                "b": 0,
+                "operation": "Add"
             }
         },
         {
@@ -286,6 +213,87 @@
             "content": {},
             "type_name": "Polyphonic",
             "parameters": {}
+        },
+        {
+            "id": 140070361573984,
+            "title": "ADSR",
+            "pos_x": 310.0,
+            "pos_y": -190.0,
+            "inputs": [
+                {
+                    "id": 140070361575488,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 5
+                },
+                {
+                    "id": 140070361575536,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140070361575584,
+                    "index": 2,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140070361575632,
+                    "index": 3,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140070361575680,
+                    "index": 4,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140070361575728,
+                    "index": 5,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 2
+                },
+                {
+                    "id": 140070361575776,
+                    "index": 6,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 0
+                },
+                {
+                    "id": 140070361575824,
+                    "index": 7,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 0
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140070361575872,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 0
+                }
+            ],
+            "content": {},
+            "type_name": "ADSR",
+            "parameters": {
+                "attack": 1000,
+                "decay": 1000,
+                "sustain": 0.5,
+                "release": 2000
+            }
         }
     ],
     "edges": [
@@ -314,22 +322,22 @@
             "end": 139860724368288
         },
         {
-            "id": 139860717970432,
-            "edge_type": 2,
-            "start": 139860724329440,
-            "end": 139860717970720
-        },
-        {
-            "id": 139860717971776,
-            "edge_type": 2,
-            "start": 139860717970816,
-            "end": 139860717972832
-        },
-        {
             "id": 139860717971248,
             "edge_type": 2,
             "start": 139860724298992,
             "end": 139860717972736
+        },
+        {
+            "id": 140070368268448,
+            "edge_type": 2,
+            "start": 139860724329440,
+            "end": 140070361575776
+        },
+        {
+            "id": 140070368231136,
+            "edge_type": 2,
+            "start": 140070361575872,
+            "end": 139860717972832
         }
     ]
 }

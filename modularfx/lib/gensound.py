@@ -69,9 +69,15 @@ class SignalNode(Node):
 class TransformNode(Node):
     group = 'Transforms'
     node_colour = 3
+    play = Slot()
     apply = Input(socket_type=0)
     concat = Input(socket_type=0)
     output = Output(socket_type=0)
+
+    @play.evaluator
+    def play(self):
+        """Preview the sound up to this node."""
+        self.output.eval().play()
 
     @output.evaluator
     def output(self):
