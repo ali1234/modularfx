@@ -39,7 +39,7 @@ class Button(Node):
 class Inspector(Node):
     group = 'Sinks'
     node_colour = 6
-    input = Input(socket_type=2)
+    input = Input(socket_type=6)
     inspect = Slot()
 
     def print_ast(self, code):
@@ -52,4 +52,49 @@ class Inspector(Node):
 
     @inspect.evaluator
     def inspect(self):
+        print(self.input.eval())
         print(self.input.code())
+
+
+@register_node
+@Node.introspect('Range')
+def _range(start, stop, step=1):
+    return range(start, stop, step)
+
+
+@register_node
+class ForEach(Node):
+    group = 'General'
+    node_colour = 2
+    iterable = Input()
+    operation = Input(order=0)
+    len = Output(socket_type=2, order=0)
+    item = Output(socket_type=2)
+    index = Output(socket_type=2)
+    result = Output()
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self._current_item = None
+        self._current_index = None
+
+    @len.evaluator
+    def len(self):
+        return len(self.iterable.eval())
+
+    @item.evaluator
+    def item(self):
+        return self._current_item
+
+    @index.evaluator
+    def index(self):
+        return self._current_index
+
+    @result.evaluator
+    def result(self):
+        results = []
+        for n, i in enumerate(self.iterable.eval()):
+            self._current_index = n
+            self._current_item = i
+            results.append(self.operation.eval())
+        return results

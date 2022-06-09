@@ -33,9 +33,6 @@ def ensure_subprocess():
     return openscad_temp_file
 
 
-
-
-
 class SolidNode(Node):
     group = 'Solid Python'
     node_color = 0
@@ -70,14 +67,13 @@ for name, cls in [
 
 
 @register_node
-class Difference(SolidNode):
-    a = Input(is_multi=True, reduce=operator.add)
-    b = Input(is_multi=True, reduce=operator.add)
+class Union(SolidNode):
+    objects = Input(is_multi=True)
     result = Output()
 
     @result.evaluator
     def result(self):
-        return solid.difference()(self.a.eval(), self.b.eval())
+        return solid.union()(*self.objects.eval())
 
 
 @register_node
@@ -88,6 +84,17 @@ class Intersection(SolidNode):
     @result.evaluator
     def result(self):
         return solid.intersection()(*self.objects.eval())
+
+
+@register_node
+class Difference(SolidNode):
+    a = Input(is_multi=True, reduce=operator.add)
+    b = Input(is_multi=True, reduce=operator.add)
+    result = Output()
+
+    @result.evaluator
+    def result(self):
+        return solid.difference()(self.a.eval(), self.b.eval())
 
 
 @register_node
