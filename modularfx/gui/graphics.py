@@ -70,9 +70,13 @@ class BaseContent(QDMNodeContentWidget):
                 self.fields[k] = self.addField(k, v)
             elif isinstance(v, Input):
                 if not v.hidden:
+                    if left_tmp and v.order != left_tmp[-1][1].order:
+                        self.doLeftRight(left_tmp, right_tmp)
                     left_tmp.append((k, v))
             elif isinstance(v, (Signal, Output)):
                 if not v.hidden:
+                    if right_tmp and v.order != right_tmp[-1][1].order:
+                        self.doLeftRight(left_tmp, right_tmp)
                     right_tmp.append((k, v))
         self.doLeftRight(left_tmp, right_tmp)
 
