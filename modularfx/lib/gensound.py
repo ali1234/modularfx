@@ -1,3 +1,5 @@
+from traceback import print_exc
+
 import gensound.curve
 import gensound.signals
 import gensound.filters
@@ -47,7 +49,10 @@ class SignalNode(Node):
     @play.evaluator
     def play(self):
         """Preview the sound up to this node."""
-        self.output.eval().play()
+        try:
+            self.output.eval().play()
+        except Exception:
+            print_exc()
 
     @output.evaluator
     def output(self):
@@ -79,7 +84,10 @@ class TransformNode(Node):
     @play.evaluator
     def play(self):
         """Preview the sound up to this node."""
-        self.output.eval().play()
+        try:
+            self.output.eval().play()
+        except Exception:
+            print_exc()
 
     @output.evaluator
     def output(self):

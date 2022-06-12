@@ -27,10 +27,9 @@ class Polyphonic(Node):
 
     @play.evaluator
     def play(self):
-        src = self.sink.eval()
         try:
+            src = self.sink.eval()
             snd = pg.mixer.Sound(src.to_bytes(sample_rate=self.freq, byte_width=2, max_amplitude=self.volume.eval()))
+            snd.play()
         except Exception as e:
             print_exc()
-        else:
-            snd.play()
